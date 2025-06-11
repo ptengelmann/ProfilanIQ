@@ -10,6 +10,7 @@ const path = require('path');
 
 // Import routes
 const profileRoute = require('./routes/profile');
+const compareRoute = require('./routes/compare');
 
 // Import Advanced Logger
 const AdvancedLogger = require('./utils/AdvancedLogger');
@@ -20,7 +21,7 @@ const app = express();
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
+  max: process.env.NODE_ENV === 'production' ? 50 : 100, // Lower limit in production
   message: {
     error: 'Too many requests from this IP, please try again later.',
     retryAfter: '15 minutes'
@@ -95,6 +96,9 @@ app.use(morgan('combined', {
   }
 }));
 
+// Serve static files
+app.use('/api-docs', express.static(path.join(__dirname, 'public')));
+
 // Health check route
 app.get('/api/health', (req, res) => {
   logger.info('Health check requested', { requestId: req.requestId });
@@ -103,15 +107,17 @@ app.get('/api/health', (req, res) => {
     status: 'healthy',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    version: '2.1.0', // Updated version for enhanced logging
+    version: '2.1.0',
     environment: process.env.NODE_ENV || 'development',
     memory: process.memoryUsage(),
-    requestId: req.requestId
+    requestId: req.requestId,
+    documentation: `${req.protocol}://${req.get('host')}/api-docs` // Add documentation URL
   });
 });
 
 // API Routes
 app.use('/api/profile', profileRoute);
+app.use('/api/compare', compareRoute);
 
 // 404 handler
 app.use('*', (req, res) => {
@@ -127,7 +133,8 @@ app.use('*', (req, res) => {
     message: `The endpoint ${req.method} ${req.originalUrl} does not exist`,
     availableEndpoints: [
       'GET /api/health',
-      'POST /api/profile'
+      'POST /api/profile',
+      'POST /api/compare'
     ],
     requestId: req.requestId
   });
@@ -182,8 +189,11 @@ const server = app.listen(PORT, () => {
   logger.info(`📊 API Endpoints:`);
   logger.info(`   GET  /api/health - Health check`);
   logger.info(`   POST /api/profile - CSV profiling`);
+  logger.info(`   POST /api/compare - CSV comparison`);
+  logger.info(`📚 Documentation: http://localhost:${PORT}/api-docs`);
   logger.info(`💾 Max Upload: 50MB`);
   logger.info(`📁 Logs Directory: ${path.join(__dirname, 'logs')}`);
+  logger.info(`📁 Cache Directory: ${path.join(__dirname, 'cache')}`);
   logger.info('='.repeat(60));
 });
 

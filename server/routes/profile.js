@@ -3,6 +3,12 @@ const router = express.Router();
 const Papa = require('papaparse');
 const { performance } = require('perf_hooks');
 const ProfilerService = require('../services/profilerService');
+const SamplingService = require('../services/samplingService');
+const CacheService = require('../services/cacheService');
+
+// Initialize services
+const samplingService = new SamplingService();
+const cacheService = new CacheService(console); // Temporary logger until proper injection
 
 // Simple validation middleware
 const validateProfileRequest = (req, res, next) => {
@@ -43,16 +49,63 @@ const validateProfileRequest = (req, res, next) => {
   next();
 };
 
-// In your profile.js route, update the main POST handler:
-
 router.post('/', validateProfileRequest, async (req, res, next) => {
   const startTime = performance.now();
   
   try {
     const { csv, options = {} } = req.body;
     
-    // 🔥 NEW: Enhanced profiling start
+    // Extract cache and sampling options
+    const { 
+      useCache = true,
+      enableSampling = true,
+      sampleSize = 5000,
+      fullAnalysis = false
+    } = options;
+    
     req.logger.profileRequest(req.requestId, { csv, options });
+
+    // Generate a fingerprint for caching
+    let fingerprint = null;
+    let cacheUsed = false;
+    
+    if (useCache) {
+      fingerprint = cacheService.generateFingerprint(csv, options);
+      
+      // Check if we have a cached result
+      const cachedResult = cacheService.getCachedResult(fingerprint);
+      
+      if (cachedResult) {
+        req.logger.info('Using cached analysis result', {
+          requestId: req.requestId,
+          fingerprint: fingerprint.substring(0, 8) // Just log a prefix for privacy
+        });
+        
+        const cacheHitTime = performance.now() - startTime;
+        
+        // Add cache metrics to the result
+        const resultWithCacheMetrics = {
+          ...cachedResult,
+          summary: {
+            ...cachedResult.summary,
+            cache: {
+              hit: true,
+              retrievalTime: `${cacheHitTime.toFixed(2)}ms`
+            }
+          }
+        };
+        
+        req.logger.profileComplete(req.requestId, resultWithCacheMetrics, cacheHitTime);
+        
+        // Return cached result
+        return res.json({
+          success: true,
+          requestId: req.requestId,
+          data: resultWithCacheMetrics,
+          fromCache: true
+        });
+      }
+    }
 
     // Step 1: Parse CSV with enhanced options
     const parseStartTime = performance.now();
@@ -92,7 +145,7 @@ router.post('/', validateProfileRequest, async (req, res, next) => {
       }
     }
 
-    const data = parsed.data;
+    let data = parsed.data;
     
     if (!data || data.length === 0) {
       req.logger.profileError(req.requestId, new Error('No data found'), performance.now() - startTime);
@@ -102,7 +155,38 @@ router.post('/', validateProfileRequest, async (req, res, next) => {
       });
     }
 
-    // 🔥 NEW: Log parsing success
+    // Sampling for large datasets
+    let samplingMetadata = { isSampled: false };
+    
+    if (enableSampling && data.length > sampleSize && !fullAnalysis) {
+      req.logger.info('Sampling large dataset', {
+        requestId: req.requestId,
+        originalRowCount: data.length,
+        targetSampleSize: sampleSize
+      });
+      
+      const samplingStartTime = performance.now();
+      const { sample, metadata } = samplingService.createSample(data, {
+        maxSampleSize: sampleSize,
+        stratify: true
+      });
+      const samplingTime = performance.now() - samplingStartTime;
+      
+      data = sample;
+      samplingMetadata = {
+        ...metadata,
+        samplingTime: `${samplingTime.toFixed(2)}ms`
+      };
+      
+      req.logger.info('Dataset sampled', {
+        requestId: req.requestId,
+        sampleSize: data.length,
+        samplingRate: samplingMetadata.samplingRate,
+        samplingTime: samplingMetadata.samplingTime
+      });
+    }
+
+    // Log parsing success
     req.logger.info('CSV parsing completed', {
       requestId: req.requestId,
       rowCount: data.length,
@@ -119,13 +203,36 @@ router.post('/', validateProfileRequest, async (req, res, next) => {
 
     const totalTime = performance.now() - startTime;
 
-    // 🔥 NEW: Enhanced completion logging
+    // Cache the result if caching is enabled
+    if (useCache && fingerprint) {
+      const cacheStartTime = performance.now();
+      const cached = cacheService.cacheResult(fingerprint, profileResult);
+      const cacheTime = performance.now() - cacheStartTime;
+      
+      cacheUsed = true;
+      
+      req.logger.info('Cached analysis result', {
+        requestId: req.requestId,
+        fingerprint: fingerprint.substring(0, 8),
+        cacheTime: `${cacheTime.toFixed(2)}ms`,
+        success: cached
+      });
+      
+      // Add cache metrics to the result
+      profileResult.summary.cache = {
+        hit: false,
+        stored: cached,
+        storageTime: `${cacheTime.toFixed(2)}ms`
+      };
+    }
+
     req.logger.profileComplete(req.requestId, profileResult, totalTime);
 
     // Step 3: Return comprehensive response with enhanced metadata
     res.json({
       success: true,
       requestId: req.requestId,
+      fromCache: false,
       data: {
         summary: {
           ...profileResult.summary,
@@ -134,12 +241,13 @@ router.post('/', validateProfileRequest, async (req, res, next) => {
             parsing: `${parseTime.toFixed(2)}ms`,
             profiling: `${profileTime.toFixed(2)}ms`
           },
-          // 🔥 NEW: Add performance insights
           performance: {
             rowsPerSecond: Math.round((profileResult.summary.totalRows / totalTime) * 1000),
             columnsPerSecond: Math.round((profileResult.summary.totalColumns / totalTime) * 1000),
             efficiency: totalTime < 1000 ? 'excellent' : totalTime < 5000 ? 'good' : 'needs optimization'
-          }
+          },
+          sampling: samplingMetadata,
+          cache: profileResult.summary.cache || { enabled: useCache, used: cacheUsed }
         },
         columns: profileResult.columnStats,
         correlations: profileResult.correlations,
@@ -155,7 +263,7 @@ router.post('/', validateProfileRequest, async (req, res, next) => {
   } catch (error) {
     const totalTime = performance.now() - startTime;
     
-    // 🔥 NEW: Enhanced error logging
+    // Enhanced error logging
     req.logger.profileError(req.requestId, error, totalTime);
 
     next(error);
@@ -168,7 +276,7 @@ router.get('/', (req, res) => {
   
   res.json({
     message: 'CSV Profiler API is running',
-    version: '2.0.0',
+    version: '2.1.0',
     endpoints: {
       'POST /': 'Profile CSV data',
       'GET /': 'Health check'
@@ -180,10 +288,15 @@ router.get('/', (req, res) => {
         csv: 'string (required) - CSV data as string',
         options: {
           delimiter: 'string (optional) - CSV delimiter (,;|\\t)',
-          skipEmptyLines: 'boolean (optional) - Skip empty lines (default: true)'
+          skipEmptyLines: 'boolean (optional) - Skip empty lines (default: true)',
+          enableSampling: 'boolean (optional) - Enable sampling for large datasets (default: true)',
+          sampleSize: 'number (optional) - Maximum sample size if sampling is enabled (default: 5000)',
+          fullAnalysis: 'boolean (optional) - Force full analysis even for large datasets (default: false)',
+          useCache: 'boolean (optional) - Use cached results for identical datasets (default: true)'
         }
       }
-    }
+    },
+    documentation: `${req.protocol}://${req.get('host')}/api-docs`
   });
 });
 

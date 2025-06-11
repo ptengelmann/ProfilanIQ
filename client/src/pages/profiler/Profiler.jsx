@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Upload, 
   FileText, 
@@ -17,7 +17,8 @@ import {
   Download,
   Clock,
   Server,
-  CheckCircle
+  CheckCircle,
+  Book
 } from 'lucide-react';
 import styles from './profiler.module.scss';
 import DataVisualizations from './components/DataVisualizations';
@@ -25,9 +26,7 @@ import InsightsDashboard from './components/InsightsDashboard';
 import FileComparisonTool from './components/FileComparisonTool';
 import SummaryDashboard from './components/SummaryDashboard';
 import FeatureImportanceAnalyzer from './components/FeatureImportanceAnalyzer';
-
-
-
+import apiClient from '../../services/apiClient';
 
 const Profiler = () => {
   const [file, setFile] = useState(null);
@@ -36,10 +35,29 @@ const Profiler = () => {
   const [error, setError] = useState(null);
   const [processingStats, setProcessingStats] = useState(null);
   const [activeVisualizationTab, setActiveVisualizationTab] = useState('distributions');
+  const [apiStatus, setApiStatus] = useState(null);
 
+  // Check API health on component mount
+  useEffect(() => {
+    const checkApiHealth = async () => {
+      try {
+        const healthStatus = await apiClient.checkHealth();
+        setApiStatus({
+          status: healthStatus.status,
+          version: healthStatus.version,
+          documentation: healthStatus.documentation
+        });
+      } catch (err) {
+        console.error('API health check failed:', err);
+        setApiStatus({
+          status: 'unhealthy',
+          error: err.message
+        });
+      }
+    };
 
-  // API Configuration
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+    checkApiHealth();
+  }, []);
 
   const handleFileUpload = (event) => {
     const selectedFile = event.target.files[0];
@@ -73,53 +91,39 @@ const Profiler = () => {
 
       console.log('Sending CSV to backend...');
       
-      // Send to backend
+      // Send to backend using API client
       const startTime = Date.now();
-      const response = await fetch(`${API_BASE_URL}/api/profile`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          csv: csvText,
-          options: {
-            skipEmptyLines: true,
-            delimiter: '' // Auto-detect
-          }
-        })
+      const response = await apiClient.profileCsv(csvText, {
+        skipEmptyLines: true,
+        delimiter: '', // Auto-detect
+        enableSampling: true,
+        useCache: true
       });
-
       const endTime = Date.now();
       const responseTime = endTime - startTime;
 
-      console.log('Response received:', response.status);
+      console.log('Response received');
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `Server error: ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log('Backend result:', result);
-      
-      if (result.success && result.data) {
+      if (response.success && response.data) {
         // Safely extract data with defaults
         const profileData = {
-          summary: result.data.summary || {},
-          columnStats: result.data.columns || {},
-          correlations: result.data.correlations || { all: [], positive: [], negative: [] },
-          insights: result.data.insights || []
+          summary: response.data.summary || {},
+          columnStats: response.data.columns || {},
+          correlations: response.data.correlations || { all: [], positive: [], negative: [] },
+          insights: response.data.insights || []
         };
 
         setProfile(profileData);
         setProcessingStats({
-          requestId: result.requestId,
+          requestId: response.requestId,
           clientProcessingTime: responseTime,
-          serverProcessingTime: result.data.summary?.processingTime || {},
-          performance: result.data.summary?.performance || {}
+          serverProcessingTime: response.data.summary?.processingTime || {},
+          performance: response.data.summary?.performance || {},
+          fromCache: response.fromCache || false,
+          sampling: response.data.summary?.sampling || { isSampled: false }
         });
       } else {
-        throw new Error(result.message || 'Processing failed - no data returned');
+        throw new Error(response.message || 'Processing failed - no data returned');
       }
 
     } catch (err) {
@@ -212,6 +216,19 @@ const Profiler = () => {
         </div>
         <h1>CSV Profiler Pro</h1>
         <p>Advanced data profiling with AI-powered insights</p>
+        
+        {apiStatus && (
+          <div className={styles.apiStatus}>
+            <div className={`${styles.statusIndicator} ${styles[apiStatus.status]}`}></div>
+            <span>API v{apiStatus.version}</span>
+            {apiStatus.documentation && (
+              <a href={apiStatus.documentation} target="_blank" rel="noopener noreferrer" className={styles.docsLink}>
+                <Book size={14} />
+                <span>Documentation</span>
+              </a>
+            )}
+          </div>
+        )}
       </div>
 
       <div className={styles.uploadSection}>
@@ -277,6 +294,16 @@ const Profiler = () => {
               <CheckCircle size={14} />
               <span>Efficiency: {processingStats.performance?.efficiency || 'N/A'}</span>
             </div>
+            {processingStats.fromCache && (
+              <div className={`${styles.statItem} ${styles.cacheHit}`}>
+                <span>Results from cache</span>
+              </div>
+            )}
+            {processingStats.sampling?.isSampled && (
+              <div className={`${styles.statItem} ${styles.sampled}`}>
+                <span>Data sampled ({processingStats.sampling.samplingRate?.toFixed(2) || ''}×)</span>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -298,42 +325,42 @@ const Profiler = () => {
             </div>
           </div>
 
-{/* Summary Dashboard */}
-{profile && (
-  <div className={styles.section}>
-    <div className={styles.sectionHeader}>
-      <Database size={20} />
-      <h2>Data Overview</h2>
-    </div>
-    <SummaryDashboard profile={profile} processingStats={processingStats} />
-  </div>
-)}
+          {/* Summary Dashboard */}
+          {profile && (
+            <div className={styles.section}>
+              <div className={styles.sectionHeader}>
+                <Database size={20} />
+                <h2>Data Overview</h2>
+              </div>
+              <SummaryDashboard profile={profile} processingStats={processingStats} />
+            </div>
+          )}
 
-{/* AI Insights Dashboard */}
-{profile && (
-  <div className={styles.section}>
-    <div className={styles.sectionHeader}>
-      <Lightbulb size={20} />
-      <h2>AI Insights Dashboard</h2>
-    </div>
-    <InsightsDashboard profile={profile} />
-  </div>
-)}
+          {/* AI Insights Dashboard */}
+          {profile && (
+            <div className={styles.section}>
+              <div className={styles.sectionHeader}>
+                <Lightbulb size={20} />
+                <h2>AI Insights Dashboard</h2>
+              </div>
+              <InsightsDashboard profile={profile} />
+            </div>
+          )}
 
           {/* Data Visualizations */}
-{profile && (
-  <div className={styles.section}>
-    <div className={styles.sectionHeader}>
-      <BarChart3 size={20} />
-      <h2>Data Visualizations</h2>
-    </div>
-    <DataVisualizations 
-      profile={profile} 
-      activeTab={activeVisualizationTab} 
-      setActiveTab={setActiveVisualizationTab} 
-    />
-  </div>
-)}
+          {profile && (
+            <div className={styles.section}>
+              <div className={styles.sectionHeader}>
+                <BarChart3 size={20} />
+                <h2>Data Visualizations</h2>
+              </div>
+              <DataVisualizations 
+                profile={profile} 
+                activeTab={activeVisualizationTab} 
+                setActiveTab={setActiveVisualizationTab} 
+              />
+            </div>
+          )}
 
           {/* Column Statistics */}
           {Object.keys(safeColumnStats).length > 0 && (
@@ -465,18 +492,19 @@ const Profiler = () => {
         </div>
       )}
       
-{/* Feature Importance Analyzer */}
-{profile && (
-  <div className={styles.section}>
-    <FeatureImportanceAnalyzer profile={profile} />
-  </div>
-)}
+      {/* Feature Importance Analyzer */}
+      {profile && (
+        <div className={styles.section}>
+          <FeatureImportanceAnalyzer profile={profile} />
+        </div>
+      )}
+
       {/* File Comparison Tool */}
-{profile && (
-  <div className={styles.section}>
-    <FileComparisonTool currentProfile={profile} />
-  </div>
-)}
+      {profile && (
+        <div className={styles.section}>
+          <FileComparisonTool currentProfile={profile} />
+        </div>
+      )}
     </div>
   );
 };

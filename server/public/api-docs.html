@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSV Profiler Pro API Documentation</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #2563eb;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 10px;
+    }
+    h2 {
+      color: #1e40af;
+      margin-top: 30px;
+    }
+    h3 {
+      color: #3b82f6;
+      margin-top: 25px;
+    }
+    pre {
+      background-color: #f1f5f9;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    code {
+      font-family: 'Fira Code', 'Consolas', monospace;
+    }
+    .endpoint {
+      background-color: #dbeafe;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+    .method {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-weight: bold;
+      margin-right: 10px;
+      color: white;
+    }
+    .get {
+      background-color: #10b981;
+    }
+    .post {
+      background-color: #3b82f6;
+    }
+    .endpoint-url {
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-weight: bold;
+    }
+    .response-example {
+      margin-top: 10px;
+    }
+    .parameter {
+      margin-bottom: 15px;
+    }
+    .parameter-name {
+      font-weight: bold;
+    }
+    .parameter-type {
+      color: #6b7280;
+      font-style: italic;
+      margin-left: 5px;
+    }
+    .parameter-description {
+      margin-top: 5px;
+    }
+    .required {
+      color: #ef4444;
+      font-weight: bold;
+      margin-left: 5px;
+    }
+    .optional {
+      color: #6b7280;
+      margin-left: 5px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    th {
+      background-color: #f1f5f9;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>CSV Profiler Pro API Documentation</h1>
+  
+  <section>
+    <h2>Introduction</h2>
+    <p>
+      CSV Profiler Pro API provides a comprehensive set of endpoints for analyzing CSV data, 
+      generating statistical profiles, comparing datasets, and extracting valuable insights.
+    </p>
+    <p>
+      <strong>Base URL:</strong> <code>http://localhost:5000</code> (Development)
+    </p>
+    <p>
+      <strong>Content-Type:</strong> All requests and responses use <code>application/json</code>
+    </p>
+  </section>
+  
+  <section>
+    <h2>Endpoints</h2>
+    
+    <div class="endpoint">
+      <h3>Health Check</h3>
+      <span class="method get">GET</span>
+      <span class="endpoint-url">/api/health</span>
+      
+      <p>Check if the API is running and get version information.</p>
+      
+      <h4>Response Example</h4>
+      <pre><code>{
+  "status": "healthy",
+  "timestamp": "2023-06-15T14:23:45.123Z",
+  "uptime": 3600,
+  "version": "2.1.0",
+  "environment": "development",
+  "memory": { "rss": 75448320, "heapTotal": 23142400, "heapUsed": 17972416 },
+  "requestId": "req_1623766425123_xyz789"
+}</code></pre>
+    </div>
+    
+    <div class="endpoint">
+      <h3>Profile CSV Data</h3>
+      <span class="method post">POST</span>
+      <span class="endpoint-url">/api/profile</span>
+      
+      <p>Analyze CSV data and generate comprehensive statistical profile.</p>
+      
+      <h4>Request Parameters</h4>
+      
+      <div class="parameter">
+        <div class="parameter-name">csv<span class="parameter-type">string</span><span class="required">Required</span></div>
+        <div class="parameter-description">CSV data as a string.</div>
+      </div>
+      
+      <div class="parameter">
+        <div class="parameter-name">options<span class="parameter-type">object</span><span class="optional">Optional</span></div>
+        <div class="parameter-description">Configuration options for processing the CSV data.</div>
+        
+        <table>
+          <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td>delimiter</td>
+            <td>string</td>
+            <td>""</td>
+            <td>CSV delimiter (auto-detect if empty)</td>
+          </tr>
+          <tr>
+            <td>skipEmptyLines</td>
+            <td>boolean</td>
+            <td>true</td>
+            <td>Skip empty lines in CSV</td>
+          </tr>
+          <tr>
+            <td>enableSampling</td>
+            <td>boolean</td>
+            <td>true</td>
+            <td>Enable sampling for large datasets</td>
+          </tr>
+          <tr>
+            <td>sampleSize</td>
+            <td>number</td>
+            <td>5000</td>
+            <td>Maximum sample size if sampling is enabled</td>
+          </tr>
+          <tr>
+            <td>fullAnalysis</td>
+            <td>boolean</td>
+            <td>false</td>
+            <td>Force full analysis even for large datasets</td>
+          </tr>
+          <tr>
+            <td>useCache</td>
+            <td>boolean</td>
+            <td>true</td>
+            <td>Use cached results for identical datasets</td>
+          </tr>
+        </table>
+      </div>
+      
+      <h4>Request Example</h4>
+      <pre><code>{
+  "csv": "name,age,score\nJohn,30,85\nJane,25,92\nBob,40,78",
+  "options": {
+    "skipEmptyLines": true,
+    "delimiter": ","
+  }
+}</code></pre>
+      
+      <h4>Response Example</h4>
+      <pre><code>{
+  "success": true,
+  "requestId": "req_1623766425123_abc123",
+  "data": {
+    "summary": {
+      "totalRows": 3,
+      "totalColumns": 3,
+      "numericColumns": 2,
+      "categoricalColumns": 1,
+      "totalMissingValues": 0,
+      "processingTime": {
+        "total": "42.15ms",
+        "parsing": "5.32ms",
+        "profiling": "36.83ms"
+      },
+      "performance": {
+        "rowsPerSecond": 71,
+        "columnsPerSecond": 71,
+        "efficiency": "excellent"
+      },
+      "sampling": {
+        "isSampled": false
+      }
+    },
+    "columns": {
+      "name": {
+        "type": "categorical",
+        "totalCount": 3,
+        "validCount": 3,
+        "missingCount": 0,
+        "missingPercent": 0,
+        "unique": 3,
+        "uniquePercent": 100,
+        "topValues": [
+          ["John", 1],
+          ["Jane", 1],
+          ["Bob", 1]
+        ],
+        "entropy": 1.58,
+        "mode": "John",
+        "modeCount": 1,
+        "modePercent": 33.33
+      },
+      "age": {
+        "type": "numeric",
+        "totalCount": 3,
+        "validCount": 3,
+        "missingCount": 0,
+        "missingPercent": 0,
+        "unique": 3,
+        "uniquePercent": 100,
+        "min": 25,
+        "max": 40,
+        "mean": 31.67,
+        "median": 30,
+        "mode": 30,
+        "stdDev": 7.64,
+        "variance": 58.33,
+        "q1": 27.5,
+        "q3": 35,
+        "iqr": 7.5,
+        "outliers": 0
+      },
+      "score": {
+        "type": "numeric",
+        "totalCount": 3,
+        "validCount": 3,
+        "missingCount": 0,
+        "missingPercent": 0,
+        "unique": 3,
+        "uniquePercent": 100,
+        "min": 78,
+        "max": 92,
+        "mean": 85,
+        "median": 85,
+        "mode": 85,
+        "stdDev": 7,
+        "variance": 49,
+        "q1": 81.5,
+        "q3": 88.5,
+        "iqr": 7,
+        "outliers": 0
+      }
+    },
+    "correlations": {
+      "all": [
+        {
+          "pair": "age & score",
+          "colA": "age",
+          "colB": "score",
+          "correlation": -0.87,
+          "strength": 0.87,
+          "sampleSize": 3
+        }
+      ],
+      "strong": [
+        {
+          "pair": "age & score",
+          "colA": "age",
+          "colB": "score",
+          "correlation": -0.87,
+          "strength": 0.87,
+          "sampleSize": 3
+        }
+      ],
+      "moderate": [],
+      "weak": [],
+      "positive": [],
+      "negative": [
+        {
+          "pair": "age & score",
+          "colA": "age",
+          "colB": "score",
+          "correlation": -0.87,
+          "strength": 0.87,
+          "sampleSize": 3
+        }
+      ]
+    },
+    "insights": [
+      {
+        "type": "insight",
+        "category": "Multicollinearity",
+        "message": "Found 1 strong correlations (>0.7) - potential multicollinearity detected",
+        "severity": "medium"
+      }
+    ],
+    "metadata": {
+      "parseErrors": 0,
+      "timestamp": "2023-06-15T14:23:45.123Z",
+      "version": "2.1.0"
+    }
+  }
+}</code></pre>
+    </div>
+    
+    <div class="endpoint">
+      <h3>Compare Datasets</h3>
+      <span class="method post">POST</span>
+      <span class="endpoint-url">/api/compare</span>
+      
+      <p>Compare two datasets and identify differences in statistics, structure, and relationships.</p>
+      
+      <h4>Request Parameters</h4>
+      
+      <div class="parameter">
+        <div class="parameter-name">dataset1<span class="parameter-type">array</span><span class="required">Required</span></div>
+        <div class="parameter-description">First dataset as an array of objects (parsed CSV).</div>
+      </div>
+      
+      <div class="parameter">
+        <div class="parameter-name">dataset2<span class="parameter-type">array</span><span class="required">Required</span></div>
+        <div class="parameter-description">Second dataset as an array of objects (parsed CSV).</div>
+      </div>
+      
+      <div class="parameter">
+        <div class="parameter-name">options<span class="parameter-type">object</span><span class="optional">Optional</span></div>
+        <div class="parameter-description">Configuration options for the comparison.</div>
+      </div>
+      
+      <h4>Request Example</h4>
+      <pre><code>{
+  "dataset1": [
+    { "name": "John", "age": 30, "score": 85 },
+    { "name": "Jane", "age": 25, "score": 92 },
+    { "name": "Bob", "age": 40, "score": 78 }
+  ],
+  "dataset2": [
+    { "name": "John", "age": 31, "score": 82 },
+    { "name": "Jane", "age": 25, "score": 92 },
+    { "name": "Bob", "age": 40, "score": 78 },
+    { "name": "Alice", "age": 35, "score": 88 }
+  ],
+  "options": {}
+}</code></pre>
+      
+      <h4>Response Example</h4>
+      <pre><code>{
+  "success": true,
+  "requestId": "req_1623766425123_def456",
+  "data": {
+    "comparison": {
+      "summary": {
+        "rowCountDiff": 1,
+        "rowCountPercent": "33.33",
+        "columnCountDiff": 0,
+        "commonColumnCount": 3,
+        "uniqueToProfile1Count": 0,
+        "uniqueToProfile2Count": 0,
+        "significantChanges": 1
+      },
+      "columns": {
+        "common": ["name", "age", "score"],
+        "uniqueToProfile1": [],
+        "uniqueToProfile2": [],
+        "comparisons": {
+          "name": {
+            "column": "name",
+            "type1": "categorical",
+            "type2": "categorical",
+            "changes": {
+              "typeChanged": false,
+              "typeChange": null,
+              "missingCountDiff": 0,
+              "missingPercentDiff": 0,
+              "uniqueValuesDiff": 1,
+              "uniquePercent": 33.33,
+              "categorical": {
+                "entropyDiff": 0.12,
+                "topValueChanges": [
+                  {
+                    "value": "Alice",
+                    "count1": 0,
+                    "count2": 1,
+                    "diff": 1,
+                    "percentChange": null,
+                    "significant": false
+                  }
+                ]
+              }
+            }
+          },
+          "age": {
+            "column": "age",
+            "type1": "numeric",
+            "type2": "numeric",
+            "changes": {
+              "typeChanged": false,
+              "typeChange": null,
+              "missingCountDiff": 0,
+              "missingPercentDiff": 0,
+              "uniqueValuesDiff": 1,
+              "uniquePercent": 33.33,
+              "numeric": {
+                "meanDiff": 0.83,
+                "meanPercent": 2.63,
+                "stdDevDiff": -0.47,
+                "minDiff": 0,
+                "maxDiff": 0,
+                "rangeDiff": 0,
+                "outliersDiff": 0
+              }
+            }
+          },
+          "score": {
+            "column": "score",
+            "type1": "numeric",
+            "type2": "numeric",
+            "changes": {
+              "typeChanged": false,
+              "typeChange": null,
+              "missingCountDiff": 0,
+              "missingPercentDiff": 0,
+              "uniqueValuesDiff": 1,
+              "uniquePercent": 33.33,
+              "numeric": {
+                "meanDiff": -0.25,
+                "meanPercent": -0.29,
+                "stdDevDiff": 0.35,
+                "minDiff": 0,
+                "maxDiff": 0,
+                "rangeDiff": 0,
+                "outliersDiff": 0
+              }
+            }
+          }
+        }
+      },
+      "correlations": {
+        "added": [],
+        "removed": [],
+        "changed": [
+          {
+            "pair": "age & score",
+            "correlation1": -0.87,
+            "correlation2": -0.67,
+            "diff": 0.2,
+            "significant": true,
+            "signChange": false
+          }
+        ]
+      },
+      "insights": [
+        {
+          "category": "Data Size",
+          "type": "change",
+          "message": "Row count has increased by 1 rows (33.3%)",
+          "severity": "medium"
+        },
+        {
+          "category": "Relationships",
+          "type": "change",
+          "message": "1 correlation relationships have changed significantly",
+          "severity": "medium"
+        }
+      ]
+    },
+    "processingTime": "85.43ms"
+  }
+}</code></pre>
+    </div>
+  </section>
+  
+  <section>
+    <h2>Status Codes</h2>
+    <table>
+      <tr>
+        <th>Status Code</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td>200</td>
+        <td>Success</td>
+      </tr>
+      <tr>
+        <td>400</td>
+        <td>Bad Request - Invalid input data</td>
+      </tr>
+      <tr>
+        <td>404</td>
+        <td>Not Found - Endpoint does not exist</td>
+      </tr>
+      <tr>
+        <td>429</td>
+        <td>Too Many Requests - Rate limit exceeded</td>
+      </tr>
+      <tr>
+        <td>500</td>
+        <td>Internal Server Error</td>
+      </tr>
+    </table>
+  </section>
+  
+  <section>
+    <h2>Error Handling</h2>
+    <p>All API errors will return a JSON response with the following structure:</p>
+    
+    <pre><code>{
+  "error": "Error type",
+  "message": "Detailed error message",
+  "requestId": "req_1623766425123_ghi789"
+}</code></pre>
+    
+    <p>The <code>requestId</code> can be used for troubleshooting and tracking errors in server logs.</p>
+  </section>
+
+  <section>
+    <h2>Performance Considerations</h2>
+    <p>
+      For large CSV files (over 10,000 rows), consider the following:
+    </p>
+    <ul>
+      <li>Use sampling with <code>enableSampling: true</code> for faster processing</li>
+      <li>Enable caching with <code>useCache: true</code> for repeated analysis of the same file</li>
+      <li>Consider breaking down very large files into smaller chunks</li>
+      <li>The API enforces a 50MB limit on CSV data size</li>
+    </ul>
+  </section>
+  
+  <footer>
+    <p>CSV Profiler Pro API - Version 2.1.0</p>
+    <p>&copy; 2023 ProfilanIQ</p>
+  </footer>
+</body>
+</html>
