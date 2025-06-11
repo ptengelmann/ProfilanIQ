@@ -17,6 +17,7 @@ class AdvancedLogger {
       startTime: Date.now()
     };
 
+    // Only setup dashboard if explicitly enabled
     this.setupDevelopmentDashboard();
   }
 
@@ -31,12 +32,16 @@ class AdvancedLogger {
     console.clear();
     this.showHeader();
     
-    // Update metrics less frequently to reduce spam
-    setInterval(() => {
-      if (this.sessionMetrics.requestCount > 0) {
-        this.updateDashboard();
-      }
-    }, 30000); // Every 30 seconds and only if there's activity
+    // REMOVED: Auto-refreshing setInterval
+    // Now metrics only show after actual requests are processed
+    // If you want periodic updates, set SHOW_METRICS_INTERVAL=true in .env
+    if (process.env.SHOW_METRICS_INTERVAL === 'true') {
+      setInterval(() => {
+        if (this.sessionMetrics.requestCount > 0) {
+          this.updateDashboard();
+        }
+      }, 60000); // Reduced to every minute if enabled
+    }
   }
 
   showHeader() {
@@ -48,6 +53,7 @@ class AdvancedLogger {
 ║  Server: http://localhost:${process.env.PORT || 5000}                              ║
 ║  Environment: ${process.env.NODE_ENV || 'development'}                     ║
 ║  Started: ${new Date().toLocaleString()}                    ║
+║  Docs: http://localhost:${process.env.PORT || 5000}/api-docs               ║
 ╚══════════════════════════════════════════════════════════════╝
 `;
     console.log('\x1b[36m%s\x1b[0m', header);
@@ -145,8 +151,10 @@ class AdvancedLogger {
     
     this.writeToFile('profile', message, meta);
     
-    // Show updated metrics immediately after processing
-    this.updateDashboard();
+    // Show updated metrics immediately after processing (but don't repeat automatically)
+    if (process.env.SHOW_METRICS_AFTER_REQUEST !== 'false') {
+      setTimeout(() => this.updateDashboard(), 100);
+    }
   }
 
   profileError(requestId, error, processingTime) {
@@ -215,6 +223,11 @@ class AdvancedLogger {
         ? this.sessionMetrics.processingTimes.reduce((a, b) => a + b, 0) / this.sessionMetrics.processingTimes.length
         : 0
     };
+  }
+
+  // Manual metrics display for debugging
+  showMetrics() {
+    this.updateDashboard();
   }
 }
 

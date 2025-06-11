@@ -144,3 +144,34 @@
 {"timestamp":"2025-06-11T11:30:27.091Z","level":"warn","message":"Route not found","requestId":"req_1749641427090_uj72hkwx5","method":"GET","url":"/api-docs/","ip":"::1"}
 {"timestamp":"2025-06-11T11:30:27.093Z","level":"info","message":"Request completed","requestId":"req_1749641427090_uj72hkwx5","method":"GET","url":"/api-docs/","status":404,"duration":"2ms","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36","contentLength":205}
 {"timestamp":"2025-06-11T11:30:27.096Z","level":"info","message":"::1 - - [11/Jun/2025:11:30:27 +0000] \"GET /api-docs/ HTTP/1.1\" 404 205 \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36\""}
+{"timestamp":"2025-06-11T11:34:44.223Z","level":"warn","message":"Route not found","requestId":"req_1749641684222_dzrb6c2qc","method":"GET","url":"/api-docs/","ip":"::1"}
+{"timestamp":"2025-06-11T11:34:44.225Z","level":"info","message":"Request completed","requestId":"req_1749641684222_dzrb6c2qc","method":"GET","url":"/api-docs/","status":404,"duration":"2ms","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36","contentLength":205}
+{"timestamp":"2025-06-11T11:34:44.228Z","level":"info","message":"::1 - - [11/Jun/2025:11:34:44 +0000] \"GET /api-docs/ HTTP/1.1\" 404 205 \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36\""}
+{"timestamp":"2025-06-11T11:36:20.330Z","level":"info","message":"Health check requested","requestId":"req_1749641780329_oj7cmcpfu"}
+{"timestamp":"2025-06-11T11:36:20.332Z","level":"info","message":"Request completed","requestId":"req_1749641780329_oj7cmcpfu","method":"GET","url":"/api/health","status":200,"duration":"2ms","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36","contentLength":324}
+{"timestamp":"2025-06-11T11:36:20.335Z","level":"info","message":"::1 - - [11/Jun/2025:11:36:20 +0000] \"GET /api/health HTTP/1.1\" 200 324 \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36\""}
+{"timestamp":"2025-06-11T11:36:20.340Z","level":"info","message":"Health check requested","requestId":"req_1749641780339_n9bgtawhw"}
+{"timestamp":"2025-06-11T11:36:20.342Z","level":"info","message":"Request completed","requestId":"req_1749641780339_n9bgtawhw","method":"GET","url":"/api/health","status":200,"duration":"2ms","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36","contentLength":324}
+{"timestamp":"2025-06-11T11:36:20.345Z","level":"info","message":"::1 - - [11/Jun/2025:11:36:20 +0000] \"GET /api/health HTTP/1.1\" 200 324 \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36\""}
+{"timestamp":"2025-06-11T11:36:22.034Z","level":"info","message":"::1 - - [11/Jun/2025:11:36:22 +0000] \"GET /api-docs/ HTTP/1.1\" 200 - \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36\""}
+{"timestamp":"2025-06-11T11:38:40.664Z","level":"info","message":"Received SIGINT. Starting graceful shutdown..."}
+{"timestamp":"2025-06-11T11:38:40.685Z","level":"info","message":"Server closed successfully"}
+{"timestamp":"2025-06-11T11:38:42.849Z","level":"info","message":"============================================================"}
+{"timestamp":"2025-06-11T11:38:42.850Z","level":"info","message":"🚀 ProfilanIQ Server Started Successfully"}
+{"timestamp":"2025-06-11T11:38:42.852Z","level":"info","message":"============================================================"}
+{"timestamp":"2025-06-11T11:38:42.853Z","level":"info","message":"📍 Server: http://localhost:5000"}
+{"timestamp":"2025-06-11T11:38:42.855Z","level":"info","message":"🌍 Environment: development"}
+{"timestamp":"2025-06-11T11:38:42.856Z","level":"info","message":"📊 API Endpoints:"}
+{"timestamp":"2025-06-11T11:38:42.858Z","level":"info","message":"   GET  /api/health - Health check"}
+{"timestamp":"2025-06-11T11:38:42.860Z","level":"info","message":"   POST /api/profile - CSV profiling"}
+{"timestamp":"2025-06-11T11:38:42.861Z","level":"info","message":"   POST /api/compare - CSV comparison"}
+{"timestamp":"2025-06-11T11:38:42.862Z","level":"info","message":"📚 Documentation: http://localhost:5000/api-docs"}
+{"timestamp":"2025-06-11T11:38:42.863Z","level":"info","message":"💾 Max Upload: 50MB"}
+{"timestamp":"2025-06-11T11:38:42.865Z","level":"info","message":"📁 Logs Directory: C:\\Users\\pedro\\Desktop\\ProfilanIQ\\server\\logs"}
+{"timestamp":"2025-06-11T11:38:42.866Z","level":"info","message":"📁 Cache Directory: C:\\Users\\pedro\\Desktop\\ProfilanIQ\\server\\cache"}
+{"timestamp":"2025-06-11T11:38:42.867Z","level":"info","message":"============================================================"}
+{"timestamp":"2025-06-11T11:38:48.823Z","level":"profile","message":"🔍 Starting CSV Analysis","requestId":"req_1749641928805_9so1z1j5l","fileSize":"3.9KB"}
+{"timestamp":"2025-06-11T11:38:48.827Z","level":"info","message":"Using cached analysis result","requestId":"req_1749641928805_9so1z1j5l","fingerprint":"00dfe7e5"}
+{"timestamp":"2025-06-11T11:38:48.834Z","level":"profile","message":"✅ CSV Analysis Complete","requestId":"req_1749641928805_9so1z1j5l","processingTime":"4.15ms","rowsAnalyzed":150,"columnsAnalyzed":5,"insights":2}
+{"timestamp":"2025-06-11T11:38:48.836Z","level":"info","message":"Request completed","requestId":"req_1749641928805_9so1z1j5l","method":"POST","url":"/api/profile","status":200,"duration":"31ms","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36","contentLength":5381}
+{"timestamp":"2025-06-11T11:38:48.851Z","level":"info","message":"::1 - - [11/Jun/2025:11:38:48 +0000] \"POST /api/profile HTTP/1.1\" 200 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36\""}
