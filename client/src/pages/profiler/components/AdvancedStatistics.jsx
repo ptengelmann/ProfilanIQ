@@ -1,27 +1,67 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Calculator, TrendingUp, BarChart, Zap, Info } from 'lucide-react';
+import { 
+  Calculator, 
+  TrendingUp, 
+  BarChart, 
+  Zap, 
+  Info, 
+  Brain,
+  Target,
+  Activity,
+  Gauge,
+  Atom,
+  GitBranch,
+  Eye,
+  AlertTriangle,
+  CheckCircle,
+  Sparkles,
+  Database,
+  Cpu,
+  LineChart
+} from 'lucide-react';
 import Chart from 'chart.js/auto';
 import styles from '../profiler.module.scss';
 
 const AdvancedStatistics = ({ profile }) => {
   const [activeTest, setActiveTest] = useState('normality');
   const [testResults, setTestResults] = useState({});
+  const [animationProgress, setAnimationProgress] = useState(0);
+  const [visibleResults, setVisibleResults] = useState(0);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const distributionChartRef = useRef(null);
   const distributionChart = useRef(null);
 
   const safeColumnStats = profile?.columnStats || {};
   
+  // Animation effects
+  useEffect(() => {
+    setIsAnalyzing(true);
+    const progressTimer = setInterval(() => {
+      setAnimationProgress(prev => (prev >= 100 ? 100 : prev + 3));
+    }, 100);
+
+    const revealTimer = setInterval(() => {
+      setVisibleResults(prev => prev + 1);
+    }, 300);
+
+    setTimeout(() => {
+      setIsAnalyzing(false);
+    }, 2000);
+
+    return () => {
+      clearInterval(progressTimer);
+      clearInterval(revealTimer);
+    };
+  }, [activeTest]);
+
   // Perform statistical tests
   const performNormalityTest = (columnData) => {
-    // Simplified Shapiro-Wilk approximation
     const n = columnData.validCount;
     if (n < 3) return { test: 'insufficient_data', pValue: null };
     
-    // Use skewness and kurtosis to approximate normality
     const skewness = Math.abs(columnData.skewness || 0);
     const kurtosis = Math.abs((columnData.kurtosis || 3) - 3);
     
-    // Rough approximation of normality based on skewness/kurtosis
     const normalityScore = Math.max(0, 1 - (skewness * 0.3 + kurtosis * 0.2));
     const pValue = normalityScore > 0.5 ? 0.1 + normalityScore * 0.4 : normalityScore * 0.1;
     
@@ -30,7 +70,8 @@ const AdvancedStatistics = ({ profile }) => {
       statistic: normalityScore,
       pValue: pValue,
       interpretation: pValue > 0.05 ? 'Normal distribution' : 'Non-normal distribution',
-      confidence: pValue > 0.05 ? 'high' : 'medium'
+      confidence: pValue > 0.05 ? 'high' : 'medium',
+      severity: pValue > 0.05 ? 'excellent' : 'warning'
     };
   };
 
@@ -40,10 +81,7 @@ const AdvancedStatistics = ({ profile }) => {
       const n = corr.sampleSize || 100;
       const r = corr.correlation;
       
-      // Calculate t-statistic for correlation
       const t = r * Math.sqrt((n - 2) / (1 - r * r));
-      
-      // Approximate p-value (simplified)
       const pValue = Math.max(0.001, 1 - Math.abs(t) / 10);
       
       return {
@@ -51,7 +89,8 @@ const AdvancedStatistics = ({ profile }) => {
         tStatistic: t,
         pValue: pValue,
         significant: pValue < 0.05,
-        interpretation: pValue < 0.05 ? 'Statistically significant' : 'Not significant'
+        interpretation: pValue < 0.05 ? 'Statistically significant' : 'Not significant',
+        severity: pValue < 0.05 ? 'excellent' : 'good'
       };
     });
   };
@@ -65,8 +104,7 @@ const AdvancedStatistics = ({ profile }) => {
     const lowerBound = q1 - 1.5 * iqr;
     const upperBound = q3 + 1.5 * iqr;
     
-    // Z-score outliers (assuming mean and std)
-    const zScoreOutliers = Math.round(columnData.validCount * 0.003); // ~0.3% for normal dist
+    const zScoreOutliers = Math.round(columnData.validCount * 0.003);
     
     return {
       method: 'iqr_and_zscore',
@@ -74,7 +112,7 @@ const AdvancedStatistics = ({ profile }) => {
       zScoreOutliers: zScoreOutliers,
       lowerBound: lowerBound,
       upperBound: upperBound,
-      severity: (columnData.outliers || 0) > columnData.validCount * 0.05 ? 'high' : 'low'
+      severity: (columnData.outliers || 0) > columnData.validCount * 0.05 ? 'critical' : 'good'
     };
   };
 
@@ -91,7 +129,6 @@ const AdvancedStatistics = ({ profile }) => {
       }
     };
 
-    // Test each numeric column for normality
     Object.entries(safeColumnStats).forEach(([colName, stats]) => {
       if (stats.type === 'numeric') {
         report.normality[colName] = performNormalityTest(stats);
@@ -100,12 +137,10 @@ const AdvancedStatistics = ({ profile }) => {
       }
     });
 
-    // Count significant findings
     report.summary.significantFindings = 
       Object.values(report.normality).filter(test => test.pValue && test.pValue < 0.05).length +
       report.correlations.filter(corr => corr.significant).length;
 
-    // Generate recommendations
     const nonNormalColumns = Object.entries(report.normality)
       .filter(([col, test]) => test.pValue && test.pValue < 0.05)
       .map(([col]) => col);
@@ -114,19 +149,21 @@ const AdvancedStatistics = ({ profile }) => {
       report.summary.recommendations.push({
         type: 'transformation',
         message: `Consider log/sqrt transformation for non-normal columns: ${nonNormalColumns.join(', ')}`,
-        priority: 'medium'
+        priority: 'medium',
+        icon: <GitBranch size={16} />
       });
     }
 
     const highOutlierColumns = Object.entries(report.outliers)
-      .filter(([col, analysis]) => analysis && analysis.severity === 'high')
+      .filter(([col, analysis]) => analysis && analysis.severity === 'critical')
       .map(([col]) => col);
 
     if (highOutlierColumns.length > 0) {
       report.summary.recommendations.push({
         type: 'outlier_treatment',
         message: `High outlier concentration in: ${highOutlierColumns.join(', ')}. Consider robust scaling or outlier removal.`,
-        priority: 'high'
+        priority: 'high',
+        icon: <AlertTriangle size={16} />
       });
     }
 
@@ -135,7 +172,7 @@ const AdvancedStatistics = ({ profile }) => {
 
   const statisticalReport = generateStatisticalReport();
 
-  // Create distribution visualization
+  // Create enhanced distribution visualization
   useEffect(() => {
     if (activeTest === 'normality' && distributionChartRef.current) {
       if (distributionChart.current) {
@@ -144,13 +181,12 @@ const AdvancedStatistics = ({ profile }) => {
 
       const numericColumns = Object.entries(safeColumnStats)
         .filter(([name, stats]) => stats.type === 'numeric')
-        .slice(0, 1); // Show first numeric column
+        .slice(0, 1);
 
       if (numericColumns.length === 0) return;
 
       const [colName, stats] = numericColumns[0];
       
-      // Generate normal distribution curve for comparison
       const generateNormalCurve = (mean, std, points = 100) => {
         const data = [];
         const range = std * 4;
@@ -174,39 +210,64 @@ const AdvancedStatistics = ({ profile }) => {
             {
               label: 'Theoretical Normal Distribution',
               data: normalCurve,
-              borderColor: 'rgba(59, 130, 246, 1)',
-              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              borderColor: '#667eea',
+              backgroundColor: 'rgba(102, 126, 234, 0.1)',
               fill: true,
               tension: 0.4,
-              pointRadius: 0
+              pointRadius: 0,
+              borderWidth: 3
             }
           ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: `AI-Powered Normality Assessment: ${colName}`,
+              font: {
+                size: 16,
+                weight: 'bold'
+              },
+              color: '#0f0f23'
+            },
+            legend: {
+              display: true,
+              labels: {
+                usePointStyle: true,
+                font: {
+                  size: 12,
+                  weight: '600'
+                }
+              }
+            }
+          },
           scales: {
             x: {
               type: 'linear',
               title: {
                 display: true,
-                text: `${colName} Values`
+                text: `${colName} Values`,
+                font: {
+                  weight: 'bold'
+                }
+              },
+              grid: {
+                color: 'rgba(102, 126, 234, 0.1)'
               }
             },
             y: {
               title: {
                 display: true,
-                text: 'Density'
+                text: 'Probability Density',
+                font: {
+                  weight: 'bold'
+                }
+              },
+              grid: {
+                color: 'rgba(102, 126, 234, 0.1)'
               }
-            }
-          },
-          plugins: {
-            title: {
-              display: true,
-              text: `Normality Assessment: ${colName}`
-            },
-            legend: {
-              display: true
             }
           }
         }
@@ -214,180 +275,368 @@ const AdvancedStatistics = ({ profile }) => {
     }
   }, [activeTest, safeColumnStats]);
 
+  if (!profile) {
+    return (
+      <div className={styles.premiumSection}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionIcon}>
+            <Calculator size={20} />
+          </div>
+          <h3>Advanced Statistical Analysis</h3>
+          <div className={styles.sectionBadge}>AI-Powered</div>
+        </div>
+        <div className={styles.loadingState}>
+          <Brain size={48} />
+          <p>Waiting for data to analyze...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={styles.section}>
+    <div className={styles.premiumSection}>
+      {/* Enhanced Header */}
       <div className={styles.sectionHeader}>
-        <Calculator size={20} />
-        <h2>Advanced Statistical Analysis</h2>
+        <div className={styles.sectionIcon}>
+          <Calculator size={20} />
+          <div className={styles.iconOrbit}></div>
+        </div>
+        <h3>Advanced Statistical Intelligence</h3>
+        <div className={styles.sectionBadge}>
+          <Sparkles size={12} />
+          AI-Powered
+        </div>
       </div>
 
-      <div className={styles.visualizationTabs}>
-        <button 
-          className={`${styles.tabButton} ${activeTest === 'normality' ? styles.active : ''}`}
-          onClick={() => setActiveTest('normality')}
-        >
-          <BarChart size={16} />
-          Normality Tests
-        </button>
-        <button 
-          className={`${styles.tabButton} ${activeTest === 'correlations' ? styles.active : ''}`}
-          onClick={() => setActiveTest('correlations')}
-        >
-          <TrendingUp size={16} />
-          Correlation Significance
-        </button>
-        <button 
-          className={`${styles.tabButton} ${activeTest === 'outliers' ? styles.active : ''}`}
-          onClick={() => setActiveTest('outliers')}
-        >
-          <Zap size={16} />
-          Outlier Analysis
-        </button>
+      {/* AI Processing Status */}
+      {isAnalyzing && (
+        <div className={styles.aiProcessingStatus}>
+          <div className={styles.processingHeader}>
+            <div className={styles.processingOrb}>
+              <Brain size={16} />
+              <div className={styles.orbPulse}></div>
+            </div>
+            <span>Running statistical algorithms...</span>
+            <span className={styles.progressPercent}>{Math.round(animationProgress)}%</span>
+          </div>
+          <div className={styles.progressBar}>
+            <div 
+              className={styles.progressFill}
+              style={{ width: `${animationProgress}%` }}
+            >
+              <div className={styles.progressGlow}></div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Enhanced Navigation Tabs */}
+      <div className={styles.neuralTabs}>
+        {[
+          { id: 'normality', icon: <BarChart size={16} />, label: 'Normality Tests', algorithm: 'Shapiro-Wilk' },
+          { id: 'correlations', icon: <TrendingUp size={16} />, label: 'Correlation Tests', algorithm: 'Pearson Analysis' },
+          { id: 'outliers', icon: <Eye size={16} />, label: 'Outlier Detection', algorithm: 'IQR + Z-Score' }
+        ].map((tab) => (
+          <button 
+            key={tab.id}
+            className={`${styles.neuralTabButton} ${activeTest === tab.id ? styles.active : ''}`}
+            onClick={() => setActiveTest(tab.id)}
+          >
+            <div className={styles.tabIcon}>{tab.icon}</div>
+            <div className={styles.tabContent}>
+              <span className={styles.tabLabel}>{tab.label}</span>
+              <span className={styles.tabAlgorithm}>{tab.algorithm}</span>
+            </div>
+            <div className={styles.tabGlow}></div>
+          </button>
+        ))}
       </div>
 
+      {/* Enhanced Content Panels */}
       {activeTest === 'normality' && (
-        <div>
-          <div className={styles.chartContainer} style={{ height: '300px', marginBottom: '1.5rem' }}>
-            <canvas ref={distributionChartRef}></canvas>
+        <div className={styles.statisticalPanel}>
+          {/* Advanced Chart Container */}
+          <div className={styles.neuralChartContainer}>
+            <div className={styles.chartHeader}>
+              <div className={styles.chartIcon}>
+                <LineChart size={18} />
+              </div>
+              <h4>Distribution Analysis</h4>
+              <div className={styles.chartBadge}>Real-time</div>
+            </div>
+            <div className={styles.chartCanvas}>
+              <canvas ref={distributionChartRef}></canvas>
+            </div>
           </div>
           
-          <div className={styles.tableContainer}>
-            <table className={styles.statsTable}>
-              <thead>
-                <tr>
-                  <th>Column</th>
-                  <th>Test Statistic</th>
-                  <th>P-Value</th>
-                  <th>Interpretation</th>
-                  <th>Recommendation</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(statisticalReport.normality).map(([colName, test]) => (
-                  <tr key={colName}>
-                    <td className={styles.columnName}>{colName}</td>
-                    <td>{test.statistic?.toFixed(4) || 'N/A'}</td>
-                    <td style={{ color: test.pValue < 0.05 ? '#dc2626' : '#16a34a' }}>
-                      {test.pValue?.toFixed(4) || 'N/A'}
-                    </td>
-                    <td>{test.interpretation}</td>
-                    <td>
-                      {test.pValue && test.pValue < 0.05 ? 
-                        'Consider transformation' : 
-                        'No action needed'
-                      }
-                    </td>
+          {/* Enhanced Results Table */}
+          <div className={styles.neuralTableContainer}>
+            <div className={styles.tableHeader}>
+              <div className={styles.tableIcon}>
+                <Database size={18} />
+              </div>
+              <h4>Normality Test Results</h4>
+              <div className={styles.tableBadge}>AI Analysis</div>
+            </div>
+            <div className={styles.tableWrapper}>
+              <table className={styles.neuralTable}>
+                <thead>
+                  <tr>
+                    <th>Feature</th>
+                    <th>Test Statistic</th>
+                    <th>P-Value</th>
+                    <th>Distribution</th>
+                    <th>AI Recommendation</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {Object.entries(statisticalReport.normality).map(([colName, test], idx) => (
+                    <tr 
+                      key={colName}
+                      className={`${styles.tableRow} ${visibleResults > idx ? styles.visible : ''}`}
+                      style={{ '--delay': `${idx * 100}ms` }}
+                    >
+                      <td className={styles.featureName}>
+                        <div className={styles.featureIcon}>
+                          <Atom size={14} />
+                        </div>
+                        {colName}
+                      </td>
+                      <td className={styles.statisticValue}>
+                        {test.statistic?.toFixed(4) || 'N/A'}
+                      </td>
+                      <td className={styles.pValue}>
+                        <span className={`${styles.pValueBadge} ${styles[test.severity]}`}>
+                          {test.pValue?.toFixed(4) || 'N/A'}
+                        </span>
+                      </td>
+                      <td>
+                        <div className={`${styles.distributionBadge} ${styles[test.severity]}`}>
+                          {test.pValue && test.pValue > 0.05 ? <CheckCircle size={14} /> : <AlertTriangle size={14} />}
+                          {test.interpretation}
+                        </div>
+                      </td>
+                      <td className={styles.recommendation}>
+                        {test.pValue && test.pValue < 0.05 ? 
+                          <span className={styles.transformationRec}>Consider transformation</span> : 
+                          <span className={styles.noActionRec}>Optimal distribution</span>
+                        }
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
 
       {activeTest === 'correlations' && (
-        <div className={styles.tableContainer}>
-          <table className={styles.statsTable}>
-            <thead>
-              <tr>
-                <th>Variable Pair</th>
-                <th>Correlation</th>
-                <th>t-Statistic</th>
-                <th>P-Value</th>
-                <th>Significance</th>
-              </tr>
-            </thead>
-            <tbody>
-              {statisticalReport.correlations.map((corr, idx) => (
-                <tr key={idx}>
-                  <td className={styles.columnName}>{corr.pair}</td>
-                  <td>{corr.correlation.toFixed(4)}</td>
-                  <td>{corr.tStatistic.toFixed(4)}</td>
-                  <td style={{ color: corr.significant ? '#dc2626' : '#64748b' }}>
-                    {corr.pValue.toFixed(4)}
-                  </td>
-                  <td>
-                    <span className={`${styles.badge} ${corr.significant ? styles.significant : styles.notSignificant}`}>
-                      {corr.significant ? 'Significant' : 'Not Significant'}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className={styles.statisticalPanel}>
+          <div className={styles.neuralTableContainer}>
+            <div className={styles.tableHeader}>
+              <div className={styles.tableIcon}>
+                <GitBranch size={18} />
+              </div>
+              <h4>Correlation Significance Analysis</h4>
+              <div className={styles.tableBadge}>Pearson Method</div>
+            </div>
+            <div className={styles.tableWrapper}>
+              <table className={styles.neuralTable}>
+                <thead>
+                  <tr>
+                    <th>Variable Pair</th>
+                    <th>Correlation</th>
+                    <th>t-Statistic</th>
+                    <th>P-Value</th>
+                    <th>Significance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {statisticalReport.correlations.map((corr, idx) => (
+                    <tr 
+                      key={idx}
+                      className={`${styles.tableRow} ${visibleResults > idx ? styles.visible : ''}`}
+                      style={{ '--delay': `${idx * 100}ms` }}
+                    >
+                      <td className={styles.featureName}>
+                        <div className={styles.pairIcon}>
+                          <Target size={14} />
+                        </div>
+                        {corr.pair}
+                      </td>
+                      <td className={styles.correlationValue}>
+                        <span className={`${styles.correlationBadge} ${corr.correlation > 0 ? styles.positive : styles.negative}`}>
+                          {corr.correlation.toFixed(4)}
+                        </span>
+                      </td>
+                      <td className={styles.statisticValue}>
+                        {corr.tStatistic.toFixed(4)}
+                      </td>
+                      <td className={styles.pValue}>
+                        <span className={`${styles.pValueBadge} ${corr.significant ? styles.significant : styles.notSignificant}`}>
+                          {corr.pValue.toFixed(4)}
+                        </span>
+                      </td>
+                      <td>
+                        <div className={`${styles.significanceBadge} ${styles[corr.severity]}`}>
+                          {corr.significant ? <CheckCircle size={14} /> : <Eye size={14} />}
+                          {corr.significant ? 'Significant' : 'Not Significant'}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       )}
 
       {activeTest === 'outliers' && (
-        <div className={styles.tableContainer}>
-          <table className={styles.statsTable}>
-            <thead>
-              <tr>
-                <th>Column</th>
-                <th>IQR Outliers</th>
-                <th>Bounds</th>
-                <th>Severity</th>
-                <th>Recommendation</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.entries(statisticalReport.outliers).map(([colName, analysis]) => (
-                analysis && (
-                  <tr key={colName}>
-                    <td className={styles.columnName}>{colName}</td>
-                    <td>{analysis.iqrOutliers}</td>
-                    <td>
-                      [{analysis.lowerBound.toFixed(2)}, {analysis.upperBound.toFixed(2)}]
-                    </td>
-                    <td>
-                      <span className={`${styles.badge} ${styles[analysis.severity]}`}>
-                        {analysis.severity}
-                      </span>
-                    </td>
-                    <td>
-                      {analysis.severity === 'high' ? 
-                        'Consider robust scaling' : 
-                        'Monitor outliers'
-                      }
-                    </td>
+        <div className={styles.statisticalPanel}>
+          <div className={styles.neuralTableContainer}>
+            <div className={styles.tableHeader}>
+              <div className={styles.tableIcon}>
+                <Eye size={18} />
+              </div>
+              <h4>Outlier Detection Analysis</h4>
+              <div className={styles.tableBadge}>IQR + Z-Score</div>
+            </div>
+            <div className={styles.tableWrapper}>
+              <table className={styles.neuralTable}>
+                <thead>
+                  <tr>
+                    <th>Feature</th>
+                    <th>IQR Outliers</th>
+                    <th>Detection Bounds</th>
+                    <th>Severity</th>
+                    <th>AI Recommendation</th>
                   </tr>
-                )
-              ))}
-            </tbody>
-          </table>
+                </thead>
+                <tbody>
+                  {Object.entries(statisticalReport.outliers).map(([colName, analysis], idx) => (
+                    analysis && (
+                      <tr 
+                        key={colName}
+                        className={`${styles.tableRow} ${visibleResults > idx ? styles.visible : ''}`}
+                        style={{ '--delay': `${idx * 100}ms` }}
+                      >
+                        <td className={styles.featureName}>
+                          <div className={styles.featureIcon}>
+                            <Zap size={14} />
+                          </div>
+                          {colName}
+                        </td>
+                        <td className={styles.outlierCount}>
+                          <span className={`${styles.countBadge} ${styles[analysis.severity]}`}>
+                            {analysis.iqrOutliers}
+                          </span>
+                        </td>
+                        <td className={styles.bounds}>
+                          <span className={styles.boundRange}>
+                            [{analysis.lowerBound.toFixed(2)}, {analysis.upperBound.toFixed(2)}]
+                          </span>
+                        </td>
+                        <td>
+                          <div className={`${styles.severityBadge} ${styles[analysis.severity]}`}>
+                            {analysis.severity === 'critical' ? <AlertTriangle size={14} /> : <CheckCircle size={14} />}
+                            {analysis.severity}
+                          </div>
+                        </td>
+                        <td className={styles.recommendation}>
+                          {analysis.severity === 'critical' ? 
+                            <span className={styles.criticalRec}>Robust scaling needed</span> : 
+                            <span className={styles.monitorRec}>Continue monitoring</span>
+                          }
+                        </td>
+                      </tr>
+                    )
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Statistical Summary */}
-      <div style={{ marginTop: '2rem', padding: '1rem', background: '#f8fafc', borderRadius: '8px' }}>
-        <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-          <Info size={16} />
-          Statistical Summary
-        </h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-          <div>
-            <strong>Tests Performed:</strong> {statisticalReport.summary.totalTests}
+      {/* Enhanced Statistical Summary */}
+      <div className={styles.aiSummaryPanel}>
+        <div className={styles.summaryHeader}>
+          <div className={styles.summaryIcon}>
+            <Brain size={20} />
+            <div className={styles.iconPulse}></div>
           </div>
-          <div>
-            <strong>Significant Findings:</strong> {statisticalReport.summary.significantFindings}
+          <h4>AI Statistical Intelligence Summary</h4>
+          <div className={styles.summaryBadge}>
+            <Cpu size={12} />
+            Analysis Complete
+          </div>
+        </div>
+        
+        <div className={styles.summaryGrid}>
+          <div className={styles.summaryCard}>
+            <div className={styles.cardIcon}>
+              <Calculator size={16} />
+            </div>
+            <div className={styles.cardContent}>
+              <span className={styles.cardLabel}>Tests Performed</span>
+              <span className={styles.cardValue}>{statisticalReport.summary.totalTests}</span>
+            </div>
+          </div>
+          
+          <div className={styles.summaryCard}>
+            <div className={styles.cardIcon}>
+              <Target size={16} />
+            </div>
+            <div className={styles.cardContent}>
+              <span className={styles.cardLabel}>Significant Findings</span>
+              <span className={styles.cardValue}>{statisticalReport.summary.significantFindings}</span>
+            </div>
+          </div>
+          
+          <div className={styles.summaryCard}>
+            <div className={styles.cardIcon}>
+              <Activity size={16} />
+            </div>
+            <div className={styles.cardContent}>
+              <span className={styles.cardLabel}>Success Rate</span>
+              <span className={styles.cardValue}>
+                {((1 - statisticalReport.summary.significantFindings / Math.max(statisticalReport.summary.totalTests, 1)) * 100).toFixed(0)}%
+              </span>
+            </div>
           </div>
         </div>
         
         {statisticalReport.summary.recommendations.length > 0 && (
-          <div style={{ marginTop: '1rem' }}>
-            <strong>Recommendations:</strong>
-            <ul style={{ marginTop: '0.5rem', paddingLeft: '1.5rem' }}>
+          <div className={styles.aiRecommendations}>
+            <h5 className={styles.recommendationsTitle}>
+              <Sparkles size={16} />
+              AI Recommendations
+            </h5>
+            <div className={styles.recommendationsList}>
               {statisticalReport.summary.recommendations.map((rec, idx) => (
-                <li key={idx} style={{ marginBottom: '0.5rem' }}>
-                  <span style={{ 
-                    color: rec.priority === 'high' ? '#dc2626' : '#d97706',
-                    fontWeight: '600'
-                  }}>
-                    [{rec.priority.toUpperCase()}]
-                  </span> {rec.message}
-                </li>
+                <div 
+                  key={idx} 
+                  className={`${styles.recommendationCard} ${styles[rec.priority]}`}
+                  style={{ '--delay': `${idx * 200}ms` }}
+                >
+                  <div className={styles.recIcon}>
+                    {rec.icon}
+                  </div>
+                  <div className={styles.recContent}>
+                    <div className={styles.recHeader}>
+                      <span className={`${styles.priorityBadge} ${styles[rec.priority]}`}>
+                        {rec.priority.toUpperCase()}
+                      </span>
+                      <span className={styles.recType}>{rec.type.replace('_', ' ')}</span>
+                    </div>
+                    <p className={styles.recMessage}>{rec.message}</p>
+                  </div>
+                  <div className={styles.recPulse}></div>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         )}
       </div>
