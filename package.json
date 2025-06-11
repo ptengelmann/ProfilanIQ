@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "lucide-react": "^0.514.0",
+    "morgan": "^1.10.0",
+    "papaparse": "^5.5.3",
+    "sass": "^1.89.2"
+  }
+}

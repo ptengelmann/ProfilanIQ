@@ -1,0 +1,85 @@
+{"timestamp":"2025-06-11T10:43:47.657Z","level":"info","message":"============================================================"}
+{"timestamp":"2025-06-11T10:43:47.661Z","level":"info","message":"🚀 ProfilanIQ Server Started Successfully"}
+{"timestamp":"2025-06-11T10:43:47.664Z","level":"info","message":"============================================================"}
+{"timestamp":"2025-06-11T10:43:47.665Z","level":"info","message":"📍 Server: http://localhost:5000"}
+{"timestamp":"2025-06-11T10:43:47.666Z","level":"info","message":"🌍 Environment: development"}
+{"timestamp":"2025-06-11T10:43:47.669Z","level":"info","message":"📊 API Endpoints:"}
+{"timestamp":"2025-06-11T10:43:47.671Z","level":"info","message":"   GET  /api/health - Health check"}
+{"timestamp":"2025-06-11T10:43:47.673Z","level":"info","message":"   POST /api/profile - CSV profiling"}
+{"timestamp":"2025-06-11T10:43:47.674Z","level":"info","message":"💾 Max Upload: 50MB"}
+{"timestamp":"2025-06-11T10:43:47.676Z","level":"info","message":"📁 Logs Directory: C:\\Users\\pedro\\Desktop\\ProfilanIQ\\server\\logs"}
+{"timestamp":"2025-06-11T10:43:47.678Z","level":"info","message":"============================================================"}
+{"timestamp":"2025-06-11T10:53:16.701Z","level":"info","message":"============================================================"}
+{"timestamp":"2025-06-11T10:53:16.708Z","level":"info","message":"🚀 ProfilanIQ Server Started Successfully"}
+{"timestamp":"2025-06-11T10:53:16.709Z","level":"info","message":"============================================================"}
+{"timestamp":"2025-06-11T10:53:16.714Z","level":"info","message":"📍 Server: http://localhost:5000"}
+{"timestamp":"2025-06-11T10:53:16.716Z","level":"info","message":"🌍 Environment: development"}
+{"timestamp":"2025-06-11T10:53:16.718Z","level":"info","message":"📊 API Endpoints:"}
+{"timestamp":"2025-06-11T10:53:16.723Z","level":"info","message":"   GET  /api/health - Health check"}
+{"timestamp":"2025-06-11T10:53:16.725Z","level":"info","message":"   POST /api/profile - CSV profiling"}
+{"timestamp":"2025-06-11T10:53:16.728Z","level":"info","message":"💾 Max Upload: 50MB"}
+{"timestamp":"2025-06-11T10:53:16.734Z","level":"info","message":"📁 Logs Directory: C:\\Users\\pedro\\Desktop\\ProfilanIQ\\server\\logs"}
+{"timestamp":"2025-06-11T10:53:16.735Z","level":"info","message":"============================================================"}
+{"timestamp":"2025-06-11T10:53:44.585Z","level":"profile","message":"🔍 Starting CSV Analysis","requestId":"req_1749639224550_zfptvvhso","fileSize":"3.9KB"}
+{"timestamp":"2025-06-11T10:53:44.595Z","level":"info","message":"CSV parsing completed","requestId":"req_1749639224550_zfptvvhso","rowCount":150,"columnCount":5,"parseTime":"7.17ms","parseErrors":0}
+{"timestamp":"2025-06-11T10:53:44.597Z","level":"info","message":"Starting data profiling","requestId":"req_1749639224550_zfptvvhso","rowCount":150}
+{"timestamp":"2025-06-11T10:53:44.598Z","level":"info","message":"Analyzing columns","requestId":"req_1749639224550_zfptvvhso","columns":["sepal.length","sepal.width","petal.length","petal.width","variety"],"columnCount":5}
+{"timestamp":"2025-06-11T10:53:44.609Z","level":"info","message":"Calculating correlations","requestId":"req_1749639224550_zfptvvhso","numericColumnCount":4}
+{"timestamp":"2025-06-11T10:53:44.615Z","level":"info","message":"Profiling completed","requestId":"req_1749639224550_zfptvvhso","summary":{"totalRows":150,"totalColumns":5,"numericColumns":4,"categoricalColumns":1,"totalMissingValues":0}}
+{"timestamp":"2025-06-11T10:53:44.636Z","level":"profile","message":"✅ CSV Analysis Complete","requestId":"req_1749639224550_zfptvvhso","processingTime":"31.56ms","rowsAnalyzed":150,"columnsAnalyzed":5,"insights":2}
+{"timestamp":"2025-06-11T10:53:44.644Z","level":"info","message":"Request completed","requestId":"req_1749639224550_zfptvvhso","method":"POST","url":"/api/profile","status":200,"duration":"94ms","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0","contentLength":5563}
+{"timestamp":"2025-06-11T10:53:44.663Z","level":"info","message":"::1 - - [11/Jun/2025:10:53:44 +0000] \"POST /api/profile HTTP/1.1\" 200 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0\""}
+{"timestamp":"2025-06-11T11:05:48.333Z","level":"profile","message":"🔍 Starting CSV Analysis","requestId":"req_1749639948331_1vdufxb5r","fileSize":"3.9KB"}
+{"timestamp":"2025-06-11T11:05:48.337Z","level":"info","message":"CSV parsing completed","requestId":"req_1749639948331_1vdufxb5r","rowCount":150,"columnCount":5,"parseTime":"1.84ms","parseErrors":0}
+{"timestamp":"2025-06-11T11:05:48.338Z","level":"info","message":"Starting data profiling","requestId":"req_1749639948331_1vdufxb5r","rowCount":150}
+{"timestamp":"2025-06-11T11:05:48.339Z","level":"info","message":"Analyzing columns","requestId":"req_1749639948331_1vdufxb5r","columns":["sepal.length","sepal.width","petal.length","petal.width","variety"],"columnCount":5}
+{"timestamp":"2025-06-11T11:05:48.342Z","level":"info","message":"Calculating correlations","requestId":"req_1749639948331_1vdufxb5r","numericColumnCount":4}
+{"timestamp":"2025-06-11T11:05:48.346Z","level":"info","message":"Profiling completed","requestId":"req_1749639948331_1vdufxb5r","summary":{"totalRows":150,"totalColumns":5,"numericColumns":4,"categoricalColumns":1,"totalMissingValues":0}}
+{"timestamp":"2025-06-11T11:05:48.348Z","level":"profile","message":"✅ CSV Analysis Complete","requestId":"req_1749639948331_1vdufxb5r","processingTime":"13.84ms","rowsAnalyzed":150,"columnsAnalyzed":5,"insights":2}
+{"timestamp":"2025-06-11T11:05:48.352Z","level":"info","message":"Request completed","requestId":"req_1749639948331_1vdufxb5r","method":"POST","url":"/api/profile","status":200,"duration":"21ms","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36","contentLength":5563}
+{"timestamp":"2025-06-11T11:05:48.356Z","level":"info","message":"::1 - - [11/Jun/2025:11:05:48 +0000] \"POST /api/profile HTTP/1.1\" 200 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36\""}
+{"timestamp":"2025-06-11T11:08:50.054Z","level":"profile","message":"🔍 Starting CSV Analysis","requestId":"req_1749640130053_xakivcolk","fileSize":"3.9KB"}
+{"timestamp":"2025-06-11T11:08:50.058Z","level":"info","message":"CSV parsing completed","requestId":"req_1749640130053_xakivcolk","rowCount":150,"columnCount":5,"parseTime":"1.67ms","parseErrors":0}
+{"timestamp":"2025-06-11T11:08:50.059Z","level":"info","message":"Starting data profiling","requestId":"req_1749640130053_xakivcolk","rowCount":150}
+{"timestamp":"2025-06-11T11:08:50.060Z","level":"info","message":"Analyzing columns","requestId":"req_1749640130053_xakivcolk","columns":["sepal.length","sepal.width","petal.length","petal.width","variety"],"columnCount":5}
+{"timestamp":"2025-06-11T11:08:50.066Z","level":"info","message":"Calculating correlations","requestId":"req_1749640130053_xakivcolk","numericColumnCount":4}
+{"timestamp":"2025-06-11T11:08:50.068Z","level":"info","message":"Profiling completed","requestId":"req_1749640130053_xakivcolk","summary":{"totalRows":150,"totalColumns":5,"numericColumns":4,"categoricalColumns":1,"totalMissingValues":0}}
+{"timestamp":"2025-06-11T11:08:50.070Z","level":"profile","message":"✅ CSV Analysis Complete","requestId":"req_1749640130053_xakivcolk","processingTime":"14.51ms","rowsAnalyzed":150,"columnsAnalyzed":5,"insights":2}
+{"timestamp":"2025-06-11T11:08:50.073Z","level":"info","message":"Request completed","requestId":"req_1749640130053_xakivcolk","method":"POST","url":"/api/profile","status":200,"duration":"20ms","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36","contentLength":5563}
+{"timestamp":"2025-06-11T11:08:50.078Z","level":"info","message":"::1 - - [11/Jun/2025:11:08:50 +0000] \"POST /api/profile HTTP/1.1\" 200 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36\""}
+{"timestamp":"2025-06-11T11:09:44.689Z","level":"profile","message":"🔍 Starting CSV Analysis","requestId":"req_1749640184688_q2kfgdaik","fileSize":"3.9KB"}
+{"timestamp":"2025-06-11T11:09:44.693Z","level":"info","message":"CSV parsing completed","requestId":"req_1749640184688_q2kfgdaik","rowCount":150,"columnCount":5,"parseTime":"1.71ms","parseErrors":0}
+{"timestamp":"2025-06-11T11:09:44.694Z","level":"info","message":"Starting data profiling","requestId":"req_1749640184688_q2kfgdaik","rowCount":150}
+{"timestamp":"2025-06-11T11:09:44.695Z","level":"info","message":"Analyzing columns","requestId":"req_1749640184688_q2kfgdaik","columns":["sepal.length","sepal.width","petal.length","petal.width","variety"],"columnCount":5}
+{"timestamp":"2025-06-11T11:09:44.699Z","level":"info","message":"Calculating correlations","requestId":"req_1749640184688_q2kfgdaik","numericColumnCount":4}
+{"timestamp":"2025-06-11T11:09:44.702Z","level":"info","message":"Profiling completed","requestId":"req_1749640184688_q2kfgdaik","summary":{"totalRows":150,"totalColumns":5,"numericColumns":4,"categoricalColumns":1,"totalMissingValues":0}}
+{"timestamp":"2025-06-11T11:09:44.705Z","level":"profile","message":"✅ CSV Analysis Complete","requestId":"req_1749640184688_q2kfgdaik","processingTime":"14.12ms","rowsAnalyzed":150,"columnsAnalyzed":5,"insights":2}
+{"timestamp":"2025-06-11T11:09:44.708Z","level":"info","message":"Request completed","requestId":"req_1749640184688_q2kfgdaik","method":"POST","url":"/api/profile","status":200,"duration":"19ms","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36","contentLength":5563}
+{"timestamp":"2025-06-11T11:09:44.712Z","level":"info","message":"::1 - - [11/Jun/2025:11:09:44 +0000] \"POST /api/profile HTTP/1.1\" 200 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36\""}
+{"timestamp":"2025-06-11T11:11:19.470Z","level":"profile","message":"🔍 Starting CSV Analysis","requestId":"req_1749640279468_40d5j9dgv","fileSize":"3.9KB"}
+{"timestamp":"2025-06-11T11:11:19.475Z","level":"info","message":"CSV parsing completed","requestId":"req_1749640279468_40d5j9dgv","rowCount":150,"columnCount":5,"parseTime":"1.97ms","parseErrors":0}
+{"timestamp":"2025-06-11T11:11:19.476Z","level":"info","message":"Starting data profiling","requestId":"req_1749640279468_40d5j9dgv","rowCount":150}
+{"timestamp":"2025-06-11T11:11:19.477Z","level":"info","message":"Analyzing columns","requestId":"req_1749640279468_40d5j9dgv","columns":["sepal.length","sepal.width","petal.length","petal.width","variety"],"columnCount":5}
+{"timestamp":"2025-06-11T11:11:19.482Z","level":"info","message":"Calculating correlations","requestId":"req_1749640279468_40d5j9dgv","numericColumnCount":4}
+{"timestamp":"2025-06-11T11:11:19.484Z","level":"info","message":"Profiling completed","requestId":"req_1749640279468_40d5j9dgv","summary":{"totalRows":150,"totalColumns":5,"numericColumns":4,"categoricalColumns":1,"totalMissingValues":0}}
+{"timestamp":"2025-06-11T11:11:19.488Z","level":"profile","message":"✅ CSV Analysis Complete","requestId":"req_1749640279468_40d5j9dgv","processingTime":"15.02ms","rowsAnalyzed":150,"columnsAnalyzed":5,"insights":2}
+{"timestamp":"2025-06-11T11:11:19.492Z","level":"info","message":"Request completed","requestId":"req_1749640279468_40d5j9dgv","method":"POST","url":"/api/profile","status":200,"duration":"23ms","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36","contentLength":5562}
+{"timestamp":"2025-06-11T11:11:19.497Z","level":"info","message":"::1 - - [11/Jun/2025:11:11:19 +0000] \"POST /api/profile HTTP/1.1\" 200 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36\""}
+{"timestamp":"2025-06-11T11:12:40.059Z","level":"profile","message":"🔍 Starting CSV Analysis","requestId":"req_1749640360058_lolxcvrw0","fileSize":"3.9KB"}
+{"timestamp":"2025-06-11T11:12:40.063Z","level":"info","message":"CSV parsing completed","requestId":"req_1749640360058_lolxcvrw0","rowCount":150,"columnCount":5,"parseTime":"1.81ms","parseErrors":0}
+{"timestamp":"2025-06-11T11:12:40.064Z","level":"info","message":"Starting data profiling","requestId":"req_1749640360058_lolxcvrw0","rowCount":150}
+{"timestamp":"2025-06-11T11:12:40.067Z","level":"info","message":"Analyzing columns","requestId":"req_1749640360058_lolxcvrw0","columns":["sepal.length","sepal.width","petal.length","petal.width","variety"],"columnCount":5}
+{"timestamp":"2025-06-11T11:12:40.070Z","level":"info","message":"Calculating correlations","requestId":"req_1749640360058_lolxcvrw0","numericColumnCount":4}
+{"timestamp":"2025-06-11T11:12:40.072Z","level":"info","message":"Profiling completed","requestId":"req_1749640360058_lolxcvrw0","summary":{"totalRows":150,"totalColumns":5,"numericColumns":4,"categoricalColumns":1,"totalMissingValues":0}}
+{"timestamp":"2025-06-11T11:12:40.074Z","level":"profile","message":"✅ CSV Analysis Complete","requestId":"req_1749640360058_lolxcvrw0","processingTime":"14.26ms","rowsAnalyzed":150,"columnsAnalyzed":5,"insights":2}
+{"timestamp":"2025-06-11T11:12:40.079Z","level":"info","message":"Request completed","requestId":"req_1749640360058_lolxcvrw0","method":"POST","url":"/api/profile","status":200,"duration":"20ms","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36","contentLength":5563}
+{"timestamp":"2025-06-11T11:12:40.084Z","level":"info","message":"::1 - - [11/Jun/2025:11:12:40 +0000] \"POST /api/profile HTTP/1.1\" 200 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36\""}
+{"timestamp":"2025-06-11T11:13:02.688Z","level":"profile","message":"🔍 Starting CSV Analysis","requestId":"req_1749640382687_008vi6rvg","fileSize":"1.1KB"}
+{"timestamp":"2025-06-11T11:13:02.691Z","level":"info","message":"CSV parsing completed","requestId":"req_1749640382687_008vi6rvg","rowCount":18,"columnCount":9,"parseTime":"0.64ms","parseErrors":0}
+{"timestamp":"2025-06-11T11:13:02.692Z","level":"info","message":"Starting data profiling","requestId":"req_1749640382687_008vi6rvg","rowCount":18}
+{"timestamp":"2025-06-11T11:13:02.693Z","level":"info","message":"Analyzing columns","requestId":"req_1749640382687_008vi6rvg","columns":["Expense Category","Month","Description","Estimated Cost (£)","Actual Cost (£)","Difference (£)","Due Date","Payment Status","Notes"],"columnCount":9}
+{"timestamp":"2025-06-11T11:13:02.694Z","level":"info","message":"Calculating correlations","requestId":"req_1749640382687_008vi6rvg","numericColumnCount":0}
+{"timestamp":"2025-06-11T11:13:02.695Z","level":"info","message":"Profiling completed","requestId":"req_1749640382687_008vi6rvg","summary":{"totalRows":18,"totalColumns":9,"numericColumns":0,"categoricalColumns":9,"totalMissingValues":108}}
+{"timestamp":"2025-06-11T11:13:02.698Z","level":"profile","message":"✅ CSV Analysis Complete","requestId":"req_1749640382687_008vi6rvg","processingTime":"8.82ms","rowsAnalyzed":18,"columnsAnalyzed":9,"insights":14}
+{"timestamp":"2025-06-11T11:13:02.702Z","level":"info","message":"Request completed","requestId":"req_1749640382687_008vi6rvg","method":"POST","url":"/api/profile","status":200,"duration":"15ms","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36","contentLength":4776}
+{"timestamp":"2025-06-11T11:13:02.705Z","level":"info","message":"::1 - - [11/Jun/2025:11:13:02 +0000] \"POST /api/profile HTTP/1.1\" 200 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36\""}

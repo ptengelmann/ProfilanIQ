@@ -1,0 +1,84 @@
+[2025-06-10T21:13:55.256Z] INFO: ============================================================
+[2025-06-10T21:13:55.266Z] INFO: 🚀 ProfilanIQ Server Started Successfully
+[2025-06-10T21:13:55.267Z] INFO: ============================================================
+[2025-06-10T21:13:55.269Z] INFO: 📍 Server: http://localhost:5000
+[2025-06-10T21:13:55.270Z] INFO: 🌍 Environment: development
+[2025-06-10T21:13:55.272Z] INFO: 📊 API Endpoints:
+[2025-06-10T21:13:55.273Z] INFO:    GET  /api/health - Health check
+[2025-06-10T21:13:55.275Z] INFO:    POST /api/profile - CSV profiling
+[2025-06-10T21:13:55.276Z] INFO: 💾 Max Upload: 50MB
+[2025-06-10T21:13:55.280Z] INFO: 📁 Logs Directory: C:\Users\pedro\Desktop\ProfilanIQ\server\logs
+[2025-06-10T21:13:55.282Z] INFO: ============================================================
+[2025-06-10T21:28:20.810Z] INFO: ============================================================
+[2025-06-10T21:28:20.825Z] INFO: 🚀 ProfilanIQ Server Started Successfully
+[2025-06-10T21:28:20.830Z] INFO: ============================================================
+[2025-06-10T21:28:20.832Z] INFO: 📍 Server: http://localhost:5000
+[2025-06-10T21:28:20.833Z] INFO: 🌍 Environment: development
+[2025-06-10T21:28:20.835Z] INFO: 📊 API Endpoints:
+[2025-06-10T21:28:20.840Z] INFO:    GET  /api/health - Health check
+[2025-06-10T21:28:20.841Z] INFO:    POST /api/profile - CSV profiling
+[2025-06-10T21:28:20.844Z] INFO: 💾 Max Upload: 50MB
+[2025-06-10T21:28:20.846Z] INFO: 📁 Logs Directory: C:\Users\pedro\Desktop\ProfilanIQ\server\logs
+[2025-06-10T21:28:20.847Z] INFO: ============================================================
+[2025-06-10T21:30:45.581Z] INFO: ============================================================
+[2025-06-10T21:30:45.590Z] INFO: 🚀 ProfilanIQ Server Started Successfully
+[2025-06-10T21:30:45.597Z] INFO: ============================================================
+[2025-06-10T21:30:45.603Z] INFO: 📍 Server: http://localhost:5000
+[2025-06-10T21:30:45.609Z] INFO: 🌍 Environment: development
+[2025-06-10T21:30:45.611Z] INFO: 📊 API Endpoints:
+[2025-06-10T21:30:45.614Z] INFO:    GET  /api/health - Health check
+[2025-06-10T21:30:45.615Z] INFO:    POST /api/profile - CSV profiling
+[2025-06-10T21:30:45.618Z] INFO: 💾 Max Upload: 50MB
+[2025-06-10T21:30:45.622Z] INFO: 📁 Logs Directory: C:\Users\pedro\Desktop\ProfilanIQ\server\logs
+[2025-06-10T21:30:45.623Z] INFO: ============================================================
+[2025-06-10T21:32:19.927Z] INFO: ============================================================
+[2025-06-10T21:32:19.938Z] INFO: 🚀 ProfilanIQ Server Started Successfully
+[2025-06-10T21:32:19.941Z] INFO: ============================================================
+[2025-06-10T21:32:19.945Z] INFO: 📍 Server: http://localhost:5000
+[2025-06-10T21:32:19.948Z] INFO: 🌍 Environment: development
+[2025-06-10T21:32:19.950Z] INFO: 📊 API Endpoints:
+[2025-06-10T21:32:19.952Z] INFO:    GET  /api/health - Health check
+[2025-06-10T21:32:19.955Z] INFO:    POST /api/profile - CSV profiling
+[2025-06-10T21:32:19.959Z] INFO: 💾 Max Upload: 50MB
+[2025-06-10T21:32:19.965Z] INFO: 📁 Logs Directory: C:\Users\pedro\Desktop\ProfilanIQ\server\logs
+[2025-06-10T21:32:19.968Z] INFO: ============================================================
+{"timestamp":"2025-06-10T21:34:14.282Z","level":"info","message":"============================================================"}
+{"timestamp":"2025-06-10T21:34:14.287Z","level":"info","message":"🚀 ProfilanIQ Server Started Successfully"}
+{"timestamp":"2025-06-10T21:34:14.290Z","level":"info","message":"============================================================"}
+{"timestamp":"2025-06-10T21:34:14.292Z","level":"info","message":"📍 Server: http://localhost:5000"}
+{"timestamp":"2025-06-10T21:34:14.294Z","level":"info","message":"🌍 Environment: development"}
+{"timestamp":"2025-06-10T21:34:14.302Z","level":"info","message":"📊 API Endpoints:"}
+{"timestamp":"2025-06-10T21:34:14.311Z","level":"info","message":"   GET  /api/health - Health check"}
+{"timestamp":"2025-06-10T21:34:14.313Z","level":"info","message":"   POST /api/profile - CSV profiling"}
+{"timestamp":"2025-06-10T21:34:14.318Z","level":"info","message":"💾 Max Upload: 50MB"}
+{"timestamp":"2025-06-10T21:34:14.321Z","level":"info","message":"📁 Logs Directory: C:\\Users\\pedro\\Desktop\\ProfilanIQ\\server\\logs"}
+{"timestamp":"2025-06-10T21:34:14.324Z","level":"info","message":"============================================================"}
+{"timestamp":"2025-06-10T21:37:05.406Z","level":"profile","message":"🔍 Starting CSV Analysis","requestId":"req_1749591425353_cqugw2fc0","fileSize":"3.9KB"}
+{"timestamp":"2025-06-10T21:37:05.432Z","level":"info","message":"CSV parsing completed","requestId":"req_1749591425353_cqugw2fc0","rowCount":150,"columnCount":5,"parseTime":"21.72ms","parseErrors":0}
+{"timestamp":"2025-06-10T21:37:05.435Z","level":"info","message":"Starting data profiling","requestId":"req_1749591425353_cqugw2fc0","rowCount":150}
+{"timestamp":"2025-06-10T21:37:05.438Z","level":"info","message":"Analyzing columns","requestId":"req_1749591425353_cqugw2fc0","columns":["sepal.length","sepal.width","petal.length","petal.width","variety"],"columnCount":5}
+{"timestamp":"2025-06-10T21:37:05.456Z","level":"info","message":"Calculating correlations","requestId":"req_1749591425353_cqugw2fc0","numericColumnCount":4}
+{"timestamp":"2025-06-10T21:37:05.469Z","level":"info","message":"Profiling completed","requestId":"req_1749591425353_cqugw2fc0","summary":{"totalRows":150,"totalColumns":5,"numericColumns":4,"categoricalColumns":1,"totalMissingValues":0}}
+{"timestamp":"2025-06-10T21:37:05.475Z","level":"profile","message":"✅ CSV Analysis Complete","requestId":"req_1749591425353_cqugw2fc0","processingTime":"64.28ms","rowsAnalyzed":150,"columnsAnalyzed":5,"insights":2}
+{"timestamp":"2025-06-10T21:37:05.481Z","level":"info","message":"Request completed","requestId":"req_1749591425353_cqugw2fc0","method":"POST","url":"/api/profile","status":200,"duration":"124ms","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36","contentLength":5563}
+{"timestamp":"2025-06-10T21:37:05.506Z","level":"info","message":"::1 - - [10/Jun/2025:21:37:05 +0000] \"POST /api/profile HTTP/1.1\" 200 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36\""}
+{"timestamp":"2025-06-10T21:40:14.312Z","level":"info","message":"============================================================"}
+{"timestamp":"2025-06-10T21:40:14.313Z","level":"info","message":"🚀 ProfilanIQ Server Started Successfully"}
+{"timestamp":"2025-06-10T21:40:14.314Z","level":"info","message":"============================================================"}
+{"timestamp":"2025-06-10T21:40:14.315Z","level":"info","message":"📍 Server: http://localhost:5000"}
+{"timestamp":"2025-06-10T21:40:14.316Z","level":"info","message":"🌍 Environment: development"}
+{"timestamp":"2025-06-10T21:40:14.318Z","level":"info","message":"📊 API Endpoints:"}
+{"timestamp":"2025-06-10T21:40:14.320Z","level":"info","message":"   GET  /api/health - Health check"}
+{"timestamp":"2025-06-10T21:40:14.322Z","level":"info","message":"   POST /api/profile - CSV profiling"}
+{"timestamp":"2025-06-10T21:40:14.323Z","level":"info","message":"💾 Max Upload: 50MB"}
+{"timestamp":"2025-06-10T21:40:14.325Z","level":"info","message":"📁 Logs Directory: C:\\Users\\pedro\\Desktop\\ProfilanIQ\\server\\logs"}
+{"timestamp":"2025-06-10T21:40:14.327Z","level":"info","message":"============================================================"}
+{"timestamp":"2025-06-10T21:40:22.889Z","level":"profile","message":"🔍 Starting CSV Analysis","requestId":"req_1749591622837_8ml0a10v2","fileSize":"3.9KB"}
+{"timestamp":"2025-06-10T21:40:22.906Z","level":"info","message":"CSV parsing completed","requestId":"req_1749591622837_8ml0a10v2","rowCount":150,"columnCount":5,"parseTime":"11.96ms","parseErrors":0}
+{"timestamp":"2025-06-10T21:40:22.909Z","level":"info","message":"Starting data profiling","requestId":"req_1749591622837_8ml0a10v2","rowCount":150}
+{"timestamp":"2025-06-10T21:40:22.917Z","level":"info","message":"Analyzing columns","requestId":"req_1749591622837_8ml0a10v2","columns":["sepal.length","sepal.width","petal.length","petal.width","variety"],"columnCount":5}
+{"timestamp":"2025-06-10T21:40:22.930Z","level":"info","message":"Calculating correlations","requestId":"req_1749591622837_8ml0a10v2","numericColumnCount":4}
+{"timestamp":"2025-06-10T21:40:22.936Z","level":"info","message":"Profiling completed","requestId":"req_1749591622837_8ml0a10v2","summary":{"totalRows":150,"totalColumns":5,"numericColumns":4,"categoricalColumns":1,"totalMissingValues":0}}
+{"timestamp":"2025-06-10T21:40:22.951Z","level":"profile","message":"✅ CSV Analysis Complete","requestId":"req_1749591622837_8ml0a10v2","processingTime":"48.23ms","rowsAnalyzed":150,"columnsAnalyzed":5,"insights":2}
+{"timestamp":"2025-06-10T21:40:22.959Z","level":"info","message":"Request completed","requestId":"req_1749591622837_8ml0a10v2","method":"POST","url":"/api/profile","status":200,"duration":"121ms","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36","contentLength":5564}
+{"timestamp":"2025-06-10T21:40:22.985Z","level":"info","message":"::1 - - [10/Jun/2025:21:40:22 +0000] \"POST /api/profile HTTP/1.1\" 200 - \"http://localhost:3000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36\""}
