@@ -2299,6 +2299,8 @@
   overflow: hidden;
 }
 
+
+
 // Neural Network Background
 .neuralBackground {
   position: absolute;
@@ -3695,10 +3697,16 @@
 // ===== ADVANCED STATISTICS STYLES =====
 
 .statisticalPanel {
- display: flex;
- flex-direction: column;
- gap: 30px;
- margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: 20px;
+  
+  // ✅ ADD CONTAINMENT
+  margin-left: 20px;
+  margin-right: 20px;
+  max-width: calc(100vw - 40px);
+  box-sizing: border-box;
 }
 
 // Neural Tab System

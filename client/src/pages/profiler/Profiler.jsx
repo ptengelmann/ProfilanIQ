@@ -126,7 +126,7 @@ const Profiler = () => {
         skipEmptyLines: true,
         delimiter: '', // Auto-detect
         enableSampling: true,
-        useCache: true
+useCache: false
       });
       const endTime = Date.now();
       const responseTime = endTime - startTime;
@@ -674,24 +674,31 @@ const Profiler = () => {
                 )}
               </div>
             )}
+
+            {/* ===== MOVED ALL ADVANCED COMPONENTS INSIDE CONTENT GRID ===== */}
+            
+            {/* Advanced Statistical Intelligence */}
+            <div className={styles.premiumSection}>
+              <AdvancedStatistics profile={profile} />
+            </div>
+
+            {/* AI-Powered Export & Reporting */}
+            <div className={styles.premiumSection}>
+              <DataExportReporting profile={profile} processingStats={processingStats} />
+            </div>
+            
+            {/* Feature Importance Analyzer */}
+            <div className={styles.premiumSection}>
+              <FeatureImportanceAnalyzer profile={profile} />
+            </div>
+
+            {/* File Comparison Tool */}
+            <div className={styles.premiumSection}>
+              <FileComparisonTool currentProfile={profile} />
+            </div>
+
           </div>
         </div>
-      )}
-
-      {/* Advanced Components */}
-      {profile && (
-        <>
-          <AdvancedStatistics profile={profile} />
-          <DataExportReporting profile={profile} processingStats={processingStats} />
-          
-          <div className={styles.premiumSection}>
-            <FeatureImportanceAnalyzer profile={profile} />
-          </div>
-
-          <div className={styles.premiumSection}>
-            <FileComparisonTool currentProfile={profile} />
-          </div>
-        </>
       )}
     </div>
   );

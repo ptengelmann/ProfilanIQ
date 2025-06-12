@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import styles from '../profiler.module.scss';
 import { 
   Calculator, 
   TrendingUp, 
@@ -19,8 +20,28 @@ import {
   Cpu,
   LineChart
 } from 'lucide-react';
-import Chart from 'chart.js/auto';
-import styles from '../profiler.module.scss';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+} from 'chart.js';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
 
 const AdvancedStatistics = ({ profile }) => {
   const [activeTest, setActiveTest] = useState('normality');
@@ -31,8 +52,19 @@ const AdvancedStatistics = ({ profile }) => {
   const distributionChartRef = useRef(null);
   const distributionChart = useRef(null);
 
-  const safeColumnStats = profile?.columnStats || {};
-  
+
+
+const safeColumnStats = profile?.columnStats || {};
+const correlations = profile?.correlations || {};
+
+// ADD THIS DEBUG:
+console.log('=== FINAL DEBUG ===');
+console.log('profile?.data?.columns:', profile?.data?.columns);
+console.log('profile?.data?.columns keys:', profile?.data?.columns ? Object.keys(profile?.data?.columns) : 'undefined');
+console.log('profile?.data:', profile?.data);
+console.log('profile?.data keys:', profile?.data ? Object.keys(profile?.data) : 'undefined');
+
+
   // Animation effects
   useEffect(() => {
     setIsAnalyzing(true);
@@ -76,8 +108,8 @@ const AdvancedStatistics = ({ profile }) => {
   };
 
   const performCorrelationTests = () => {
-    const correlations = profile?.correlations?.all || [];
-    return correlations.map(corr => {
+  const allCorrelations = correlations?.all || [];
+  return allCorrelations.map(corr => {
       const n = corr.sampleSize || 100;
       const r = corr.correlation;
       
@@ -174,106 +206,88 @@ const AdvancedStatistics = ({ profile }) => {
 
   // Create enhanced distribution visualization
   useEffect(() => {
-    if (activeTest === 'normality' && distributionChartRef.current) {
-      if (distributionChart.current) {
-        distributionChart.current.destroy();
-      }
+  if (activeTest === 'normality' && distributionChartRef.current) {
+    // Destroy existing chart
+    if (distributionChart.current) {
+      distributionChart.current.destroy();
+      distributionChart.current = null;
+    }
 
-      const numericColumns = Object.entries(safeColumnStats)
-        .filter(([name, stats]) => stats.type === 'numeric')
-        .slice(0, 1);
+    const numericColumns = Object.entries(safeColumnStats)
+      .filter(([name, stats]) => stats && stats.type === 'numeric')
+      .slice(0, 1);
 
-      if (numericColumns.length === 0) return;
+    if (numericColumns.length === 0) {
+      return;
+    }
 
-      const [colName, stats] = numericColumns[0];
+    const [colName, stats] = numericColumns[0];
+
+    if (!stats.mean || !stats.stdDev || stats.stdDev === 0) {
+      return;
+    }
+
+    const generateNormalCurve = (mean, std, points = 100) => {
+      const data = [];
+      const range = std * 4;
+      const step = (range * 2) / points;
       
-      const generateNormalCurve = (mean, std, points = 100) => {
-        const data = [];
-        const range = std * 4;
-        const step = (range * 2) / points;
-        
-        for (let i = 0; i < points; i++) {
-          const x = mean - range + i * step;
-          const y = (1 / (std * Math.sqrt(2 * Math.PI))) * 
-                   Math.exp(-0.5 * Math.pow((x - mean) / std, 2));
-          data.push({ x, y });
-        }
-        return data;
-      };
+      for (let i = 0; i < points; i++) {
+        const x = mean - range + i * step;
+        const y = (1 / (std * Math.sqrt(2 * Math.PI))) * 
+                 Math.exp(-0.5 * Math.pow((x - mean) / std, 2));
+        data.push({ x, y });
+      }
+      return data;
+    };
 
-      const normalCurve = generateNormalCurve(stats.mean, stats.stdDev);
+    const normalCurve = generateNormalCurve(stats.mean, stats.stdDev);
 
-      distributionChart.current = new Chart(distributionChartRef.current, {
-        type: 'line',
-        data: {
-          datasets: [
-            {
-              label: 'Theoretical Normal Distribution',
-              data: normalCurve,
-              borderColor: '#667eea',
-              backgroundColor: 'rgba(102, 126, 234, 0.1)',
-              fill: true,
-              tension: 0.4,
-              pointRadius: 0,
-              borderWidth: 3
-            }
-          ]
+    distributionChart.current = new ChartJS(distributionChartRef.current, {
+      type: 'line',
+      data: {
+        datasets: [{
+          label: 'Theoretical Normal Distribution',
+          data: normalCurve,
+          borderColor: '#667eea',
+          backgroundColor: 'rgba(102, 126, 234, 0.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 0,
+          borderWidth: 3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: {
+            display: true,
+            text: `Distribution Analysis: ${colName}`,
+            font: { size: 16, weight: 'bold' },
+            color: '#0f0f23'
+          }
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            title: {
-              display: true,
-              text: `AI-Powered Normality Assessment: ${colName}`,
-              font: {
-                size: 16,
-                weight: 'bold'
-              },
-              color: '#0f0f23'
-            },
-            legend: {
-              display: true,
-              labels: {
-                usePointStyle: true,
-                font: {
-                  size: 12,
-                  weight: '600'
-                }
-              }
-            }
+        scales: {
+          x: {
+            type: 'linear',
+            title: { display: true, text: colName }
           },
-          scales: {
-            x: {
-              type: 'linear',
-              title: {
-                display: true,
-                text: `${colName} Values`,
-                font: {
-                  weight: 'bold'
-                }
-              },
-              grid: {
-                color: 'rgba(102, 126, 234, 0.1)'
-              }
-            },
-            y: {
-              title: {
-                display: true,
-                text: 'Probability Density',
-                font: {
-                  weight: 'bold'
-                }
-              },
-              grid: {
-                color: 'rgba(102, 126, 234, 0.1)'
-              }
-            }
+          y: {
+            title: { display: true, text: 'Density' }
           }
         }
-      });
+      }
+    });
+  }
+
+  return () => {
+    if (distributionChart.current) {
+      distributionChart.current.destroy();
+      distributionChart.current = null;
     }
-  }, [activeTest, safeColumnStats]);
+  };
+}, [activeTest, profile]); // Simple dependencies
 
   if (!profile) {
     return (

@@ -25,25 +25,30 @@ class ProfilerService {
       columnCount: keys.length 
     });
 
-    // Profile each column
-    for (const key of keys) {
-      try {
-        columnStats[key] = await this.profileColumn(data, key);
-      } catch (error) {
-        this.logger.warn('Failed to profile column', {
-          requestId: this.requestId,
-          column: key,
-          error: error.message
-        });
-        
-        columnStats[key] = {
-          type: 'unknown',
-          count: 0,
-          unique: 0,
-          error: error.message
-        };
-      }
-    }
+// Profile each column
+for (const key of keys) {
+  try {
+    console.log(`Profiling column: ${key}`);
+    columnStats[key] = await this.profileColumn(data, key);
+    console.log(`Column ${key} stats:`, columnStats[key]);
+  } catch (error) {
+    console.log(`ERROR profiling column ${key}:`, error);
+    this.logger.warn('Failed to profile column', {
+      requestId: this.requestId,
+      column: key,
+      error: error.message
+    });
+    
+    columnStats[key] = {
+      type: 'unknown',
+      count: 0,
+      unique: 0,
+      error: error.message
+    };
+  }
+}
+
+console.log('Final columnStats before return:', columnStats);
 
     // Calculate correlations for numeric columns
     const numericColumns = Object.keys(columnStats).filter(
@@ -73,12 +78,16 @@ class ProfilerService {
       summary
     });
 
-    return {
-      columnStats,
-      correlations,
-      insights,
-      summary
-    };
+console.log('=== PROFILER SERVICE FINAL RESULT ===');
+console.log('columnStats keys:', Object.keys(columnStats));
+console.log('columnStats:', columnStats);
+
+return {
+  columnStats,
+  correlations,
+  insights,
+  summary
+};
   }
 
   async profileColumn(data, columnName) {
