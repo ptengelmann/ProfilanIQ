@@ -810,6 +810,61 @@ const AdvancedInsightsDashboard = ({ profile }) => {
   const profileData = extractProfileData(profile);
   const { insights, columnStats, correlations, summary, rawData } = profileData;
 
+   // Generate synthetic data from column statistics for ML algorithms
+const generateSyntheticDataFromStats = (stats, count = 100) => {
+  console.log('Generating synthetic data from stats:', stats);
+  
+  const syntheticData = [];
+  const columns = Object.keys(stats);
+  
+  if (columns.length === 0) {
+    console.log('No columns found in stats, creating sample data structure');
+    // Create a basic data structure for ML algorithms when columnStats is empty
+    const sampleColumns = ['feature1', 'feature2', 'feature3', 'category'];
+    for (let i = 0; i < count; i++) {
+      const row = {
+        feature1: Math.random() * 100,
+        feature2: Math.random() * 50 + 25,
+        feature3: Math.random() * 200,
+        category: ['A', 'B', 'C'][Math.floor(Math.random() * 3)]
+      };
+      syntheticData.push(row);
+    }
+    console.log('Generated fallback synthetic data sample:', syntheticData.slice(0, 3));
+    return syntheticData;
+  }
+  
+  for (let i = 0; i < count; i++) {
+    const row = {};
+    columns.forEach(col => {
+      const colStats = stats[col];
+      if (colStats.type === 'numeric' || colStats.type === 'float64' || colStats.type === 'int64') {
+        // Generate data based on normal distribution using mean and std
+        const mean = colStats.mean || 0;
+        const std = colStats.stdDev || colStats.std || 1;
+        row[col] = generateNormalRandom(mean, std); // <-- FIXED: removed 'this.'
+      } else {
+        // Generate categorical data based on top values
+        const topValues = colStats.topValues || [['Category_' + (i % 5), 1]];
+        const randomIndex = Math.floor(Math.random() * topValues.length);
+        row[col] = topValues[randomIndex][0];
+      }
+    });
+    syntheticData.push(row);
+  }
+  
+  console.log('Generated synthetic data sample:', syntheticData.slice(0, 3));
+  return syntheticData;
+};
+
+ // Box-Muller transformation for normal distribution
+ const generateNormalRandom = (mean, std) => {
+   const u = Math.random();
+   const v = Math.random();
+   const z = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+   return z * std + mean;
+ };
+
 const advancedAnalysis = useMemo(() => {
   console.log('Running advanced analysis...');
   console.log('Profile exists:', !!profile);
@@ -887,52 +942,7 @@ try {
   }
 }, [profile, columnStats, rawData]);
 
- // Generate synthetic data from column statistics for ML algorithms
-const generateSyntheticDataFromStats = (stats, count = 100) => {
-  console.log('Generating synthetic data from stats:', stats);
-  
-  const syntheticData = [];
-  const columns = Object.keys(stats);
-  
-  if (columns.length === 0) {
-    console.log('No columns found in stats, creating sample data structure');
-    // Create a basic data structure for ML algorithms when columnStats is empty
-    const sampleColumns = ['feature1', 'feature2', 'feature3', 'category'];
-    for (let i = 0; i < count; i++) {
-      const row = {
-        feature1: Math.random() * 100,
-        feature2: Math.random() * 50 + 25,
-        feature3: Math.random() * 200,
-        category: ['A', 'B', 'C'][Math.floor(Math.random() * 3)]
-      };
-      syntheticData.push(row);
-    }
-    console.log('Generated fallback synthetic data sample:', syntheticData.slice(0, 3));
-    return syntheticData;
-  }
-  
-  for (let i = 0; i < count; i++) {
-    const row = {};
-    columns.forEach(col => {
-      const colStats = stats[col];
-      if (colStats.type === 'numeric' || colStats.type === 'float64' || colStats.type === 'int64') {
-        // Generate data based on normal distribution using mean and std
-        const mean = colStats.mean || 0;
-        const std = colStats.stdDev || colStats.std || 1;
-        row[col] = generateNormalRandom(mean, std); // <-- FIXED: removed 'this.'
-      } else {
-        // Generate categorical data based on top values
-        const topValues = colStats.topValues || [['Category_' + (i % 5), 1]];
-        const randomIndex = Math.floor(Math.random() * topValues.length);
-        row[col] = topValues[randomIndex][0];
-      }
-    });
-    syntheticData.push(row);
-  }
-  
-  console.log('Generated synthetic data sample:', syntheticData.slice(0, 3));
-  return syntheticData;
-};
+
 
 // Fallback insight generation
 const generateFallbackInsights = (stats, data) => {
@@ -1016,13 +1026,7 @@ const generateFallbackInsights = (stats, data) => {
   return insights;
 };
 
- // Box-Muller transformation for normal distribution
- const generateNormalRandom = (mean, std) => {
-   const u = Math.random();
-   const v = Math.random();
-   const z = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
-   return z * std + mean;
- };
+
 
  // Real-time ML processing simulation
  useEffect(() => {
